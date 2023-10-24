@@ -19,7 +19,9 @@ export interface ItemProps {
   name: string;
   description: string;
   image: any;
+  imageAlt?: string;
   price: number;
+  inStock?: boolean;
 }
 
 export type OrderStatusType =

@@ -12,7 +12,7 @@ import Empty from "./Empty";
 
 function OrdersPage() {
   const [orders, setOrders] = useState<OrderProps[]>(initialOrders);
-  const [currentTab, setCurrentTab] = useState<OrderStatusType>("complete");
+  const [currentTab, setCurrentTab] = useState<OrderStatusType>("pending");
   const filteredOrders = orders.filter((order) =>
     currentTab === "all" ? order : order.status === currentTab,
   );
