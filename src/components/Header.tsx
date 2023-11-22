@@ -1,9 +1,12 @@
 import { Switch } from "@headlessui/react";
 import clsx from "clsx";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { BiMenu } from "react-icons/bi";
 import useStoreStatus from "~/hooks/useStoreStatus";
+import pineapple from "~/images/pineapple.png";
+import Avatar from "./Avatar";
 import Banner from "./Banner";
 
 const navigation = [
@@ -32,6 +35,9 @@ export default function Header() {
     }
   }
 
+  // Don't show header on signing page
+  if (pathname === "/signin") return null;
+
   return (
     <>
       <header className="border-b border-gray-200 bg-white">
@@ -42,10 +48,10 @@ export default function Header() {
           <div className="flex items-center gap-x-8 lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
-              <img
+              <Image
                 className="h-8 w-auto"
-                src="https://em-content.zobj.net/source/apple/81/pineapple_1f34d.png"
-                alt=""
+                src={pineapple}
+                alt="Pineaaple logo"
               />
             </a>
             <div />
@@ -74,27 +80,31 @@ export default function Header() {
           </div>
 
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Switch.Group as="div" className="flex items-center">
-              <Switch.Label as="span" className="mr-3 text-sm">
-                <span className="font-medium text-gray-900">Close Store</span>{" "}
-              </Switch.Label>
-              <Switch
-                checked={closed}
-                onChange={handleToggleOpenStore}
-                className={clsx(
-                  closed ? "bg-indigo-600" : "bg-gray-200",
-                  "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2",
-                )}
-              >
-                <span
-                  aria-hidden="true"
+            <div className="flex items-center gap-6">
+              <Switch.Group as="div" className="flex items-center">
+                <Switch.Label as="span" className="mr-3 text-sm">
+                  <span className="font-medium text-gray-900">Close Store</span>{" "}
+                </Switch.Label>
+                <Switch
+                  checked={closed}
+                  onChange={handleToggleOpenStore}
                   className={clsx(
-                    closed ? "translate-x-5" : "translate-x-0",
-                    "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                    closed ? "bg-gray-900" : "bg-gray-200",
+                    "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2",
                   )}
-                />
-              </Switch>
-            </Switch.Group>
+                >
+                  <span
+                    aria-hidden="true"
+                    className={clsx(
+                      closed ? "translate-x-5" : "translate-x-0",
+                      "pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out",
+                    )}
+                  />
+                </Switch>
+              </Switch.Group>
+
+              <Avatar />
+            </div>
           </div>
         </nav>
       </header>

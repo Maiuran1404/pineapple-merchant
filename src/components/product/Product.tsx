@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
 import { currency } from "~/constants/misc";
-import type { ItemProps } from "~/constants/products";
+import type { ItemProps } from "~/constants/orders";
 import useProducts from "~/hooks/useProducts";
 import EditProductModal from "./EditProductModal";
 
@@ -13,11 +13,12 @@ const variants = {
 };
 
 function Product({ product }: { product: ItemProps }) {
-  const { addProduct, removeProduct, updateProduct } = useProducts();
+  const { removeProduct, updateProduct } = useProducts();
   const [outOfStock, setOutOfStock] = useState(false);
   const [open, setOpen] = useState(false);
 
-  function handleRemoveProduct() {
+  function handleRemoveProduct(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
     const shouldRemove = window.confirm(
       "Are you sure you want to remove this product?",
     );
@@ -66,7 +67,7 @@ function Product({ product }: { product: ItemProps }) {
             <button
               title="Delete product"
               onClick={handleRemoveProduct}
-              className="cursor-pointer rounded-full bg-gray-200 p-2 text-red-500 hover:bg-red-500 hover:text-white"
+              className="cursor-pointer rounded-full bg-gray-200 p-2 text-gray-600 hover:bg-red-500 hover:text-white"
             >
               <BiTrash size={20} />
             </button>
@@ -83,7 +84,9 @@ function Product({ product }: { product: ItemProps }) {
         <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
           <div className="flex justify-between gap-x-4 py-3">
             <dt className="text-gray-500">Price</dt>
-            <dd className="text-gray-700">{currency.token + product.price}</dd>
+            <dd className="text-gray-700">
+              {currency.token + " " + product.price}
+            </dd>
           </div>
           <div className="flex justify-between gap-x-4 py-3">
             <dt className="text-gray-500">Description</dt>
@@ -96,8 +99,8 @@ function Product({ product }: { product: ItemProps }) {
                 checked={!outOfStock}
                 onChange={handleToggleOutOfStock}
                 className={clsx(
-                  !outOfStock ? "bg-indigo-600" : "bg-gray-200",
-                  "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2",
+                  !outOfStock ? "bg-gray-900" : "bg-gray-200",
+                  "relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-gray-900 focus:ring-offset-2",
                 )}
               >
                 <span

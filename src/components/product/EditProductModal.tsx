@@ -2,7 +2,7 @@ import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useRef, useState } from "react";
 import { BiX } from "react-icons/bi";
 import { currency } from "~/constants/misc";
-import type { ItemProps } from "~/constants/products";
+import type { ItemProps } from "~/constants/orders";
 
 export default function EditProductModal({
   product,
@@ -10,23 +10,36 @@ export default function EditProductModal({
   open,
   setOpen,
 }: {
-  product: ItemProps;
+  product?: ItemProps;
   updateProduct: (updatedProduct: ItemProps) => void;
   open: boolean;
   setOpen: (open: boolean) => void;
 }) {
+  const formRef = useRef<HTMLFormElement>(null);
   const cancelButtonRef = useRef(null);
 
-  const [name, setName] = useState(product.name);
-  const [price, setPrice] = useState(product?.price);
-  const [description, setDescription] = useState(product?.description);
+  const [name, setName] = useState<string>(product?.name ?? "");
+  const [price, setPrice] = useState<number>(product?.price ?? "");
+  const [description, setDescription] = useState<string>(
+    product?.description ?? "",
+  );
+  const [image, setImage] = useState<File | undefined>(undefined);
+  const [imagePreview, setImagePreview] = useState<string | ArrayBuffer | null>(
+    null,
+  );
 
   function handleChangeName(event: React.ChangeEvent<HTMLInputElement>) {
     setName(event.target.value);
   }
 
   function handleChangePrice(event: React.ChangeEvent<HTMLInputElement>) {
-    setPrice(event.target.value);
+    const nunber = Number(event.target.value);
+
+    if (Number.isNaN(nunber)) return;
+
+    if (nunber < 0) return;
+
+    setPrice(nunber);
   }
 
   function handleChangeDescription(
@@ -35,12 +48,40 @@ export default function EditProductModal({
     setDescription(event.target.value);
   }
 
+  function handleChangeImage(event: React.ChangeEvent<HTMLInputElement>) {
+    if (!event.target.files || event.target.files.length < 1) return;
+    const file = event.target.files[0];
+
+    if (file && file.type.startsWith("image/")) {
+      setImage(file);
+
+      // Read and display image preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      clearFile();
+    }
+  }
+
+  function clearFile() {
+    setImage(undefined);
+    setImagePreview(null);
+
+    // Reset the form to clear the file input
+    formRef.current.reset();
+  }
+
   function handleApplyChanges() {
     updateProduct({
       ...product,
       name,
-      price,
+      price: Number(price),
       description,
+      image,
+      imageAlt: image?.name,
     });
 
     setOpen(false);
@@ -108,7 +149,7 @@ export default function EditProductModal({
                             Product name
                           </label>
                           <div className="mt-2">
-                            <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+                            <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-gray-900 sm:max-w-md">
                               <input
                                 type="text"
                                 name="Product name"
@@ -116,7 +157,7 @@ export default function EditProductModal({
                                 onChange={handleChangeName}
                                 id="product-name"
                                 autoComplete="given-name"
-                                className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                                className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
                               />
                             </div>
                           </div>
@@ -141,7 +182,7 @@ export default function EditProductModal({
                               value={price}
                               onChange={handleChangePrice}
                               id="price"
-                              className="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              className="block w-full rounded-md border-0 py-1.5 pl-7 pr-12 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
                               placeholder="0.00"
                               aria-describedby="price-currency"
                             />
@@ -170,7 +211,7 @@ export default function EditProductModal({
                               rows={3}
                               value={description}
                               onChange={handleChangeDescription}
-                              className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
                             />
                           </div>
                           <p className="mt-3 text-sm leading-6 text-gray-600">
@@ -186,17 +227,29 @@ export default function EditProductModal({
                             Photo
                           </label>
                           <div className="mt-2 flex items-center gap-x-3">
-                            <img
-                              src={product?.image}
-                              alt={product?.alt}
-                              className="h-12 w-12 rounded-full border border-gray-300 bg-gray-300 text-gray-300"
-                              aria-hidden="true"
-                            />
-                            <input
-                              type="file"
-                              name="photo"
-                              className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                            />
+                            <div className="relative h-12 w-12 rounded-full border border-gray-300 bg-gray-300 text-gray-300">
+                              {imagePreview && (
+                                <img
+                                  src={imagePreview}
+                                  alt={image?.name ?? "Product image"}
+                                  className="h-12 w-12 rounded-full"
+                                  aria-hidden="true"
+                                />
+                              )}
+                            </div>
+                            <form ref={formRef}>
+                              <input
+                                type="file"
+                                name="photo"
+                                onChange={handleChangeImage}
+                                className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                              />
+                            </form>
+                            {image && (
+                              <button onClick={clearFile}>
+                                <BiX size={20} />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -207,7 +260,7 @@ export default function EditProductModal({
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                   <button
                     type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                    className="inline-flex w-full justify-center rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 sm:col-start-2"
                     onClick={handleApplyChanges}
                   >
                     Apply changes

@@ -18,7 +18,7 @@ export interface ItemProps {
   id: string;
   name: string;
   description: string;
-  image: any;
+  image?: File | undefined;
   imageAlt?: string;
   price: number;
   inStock?: boolean;
