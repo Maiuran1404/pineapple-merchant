@@ -1,5 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import { Fragment, useRef, useState } from "react";
+import { AiOutlineLoading } from "react-icons/ai";
 import { BiX } from "react-icons/bi";
 import { currency } from "~/constants/misc";
 import type { ItemProps } from "~/constants/orders";
@@ -18,6 +19,7 @@ export default function EditProductModal({
   const formRef = useRef<HTMLFormElement>(null);
   const cancelButtonRef = useRef(null);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>(product?.name ?? "");
   const [price, setPrice] = useState<number>(product?.price ?? "");
   const [description, setDescription] = useState<string>(
@@ -74,8 +76,9 @@ export default function EditProductModal({
     formRef.current.reset();
   }
 
-  function handleApplyChanges() {
-    updateProduct({
+  async function handleApplyChanges() {
+    setIsLoading(true);
+    await updateProduct({
       ...product,
       name,
       price: Number(price),
@@ -85,6 +88,7 @@ export default function EditProductModal({
     });
 
     setOpen(false);
+    setIsLoading(false);
   }
 
   return (
@@ -119,6 +123,14 @@ export default function EditProductModal({
               leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
             >
               <Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+                {isLoading && (
+                  <div className="absolute left-0 top-0 z-30 flex h-full w-full items-center justify-center bg-white/60 backdrop-blur-sm">
+                    <div className="flex flex-col items-center gap-4 text-gray-900">
+                      <AiOutlineLoading size={64} className="animate-spin" />
+                      <div className="text-xl font-medium ">Updating...</div>
+                    </div>
+                  </div>
+                )}
                 <form>
                   <div className="space-y-12">
                     <div className="border-b border-gray-900/10 pb-12">

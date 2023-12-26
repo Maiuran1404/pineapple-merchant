@@ -5,7 +5,10 @@ import {
   doc,
   getDoc,
   getDocs,
+  query,
   setDoc,
+  updateDoc,
+  where,
   type DocumentData,
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
@@ -77,7 +80,6 @@ export async function getStore(user: UserInfo | null) {
     const clerk = await getDoc(clerkRef);
     if (clerk.exists()) {
       const clerkData = clerk.data();
-      console.log(clerkData);
       const storeRef = doc(database, "shops", clerkData.storeID);
 
       const store = await getDoc(storeRef);
@@ -142,8 +144,6 @@ export async function addStoreItem(shopID: string, item: ItemProps) {
       image = result ?? "";
     }
 
-    console.log(image);
-
     const newItemData = {
       ...item,
       image: image,
@@ -159,6 +159,44 @@ export async function addStoreItem(shopID: string, item: ItemProps) {
   } catch (error) {
     // Handle any errors that occurred during the addition
     console.error("Error adding store item:", error);
+    return null;
+  }
+}
+
+export async function updateStoreItem(shopID: string, item: ItemProps) {
+  try {
+    // Reference to the "products" sub-collection within the specified shop
+    const productsCollection = collection(
+      doc(database, "shops", shopID),
+      "menu",
+    );
+
+    let image = ""; // Default to empty string if no new image is provided
+
+    if (item.image) {
+      // Upload image and get doc id
+      const result = await uploadImage(item.image, shopID);
+
+      image = result ?? "";
+    }
+
+    const updatedItemData = {
+      ...item,
+      image: image,
+    };
+
+    // Reference to the specific item document
+    const itemDocRef = doc(productsCollection, item.id);
+
+    // Update the document with the new data
+    await updateDoc(itemDocRef, updatedItemData);
+
+    console.log("Item updated successfully:", item.id);
+
+    return item.id;
+  } catch (error) {
+    // Handle any errors that occurred during the update
+    console.error("Error updating store item:", error);
     return null;
   }
 }
@@ -187,7 +225,6 @@ export async function uploadImage(file: File, shopID: string) {
   try {
     const storage = getStorage();
     const storageRef = ref(storage, `${storePath}/${file.name}`);
-    console.log(storageRef);
 
     await uploadBytes(storageRef, file);
 
@@ -197,5 +234,63 @@ export async function uploadImage(file: File, shopID: string) {
     return downloadURL;
   } catch (error) {
     console.error("Error uploading image:", error);
+  }
+}
+
+export async function getTransactions(shopID: string | undefined) {
+  if (!shopID) {
+    console.error("Shop ID is undefined:", shopID);
+    return null;
+  }
+
+  const transactionsRef = collection(database, "transactions");
+
+  try {
+    const transactionsQuerySnapshot = await getDocs(
+      query(transactionsRef, where("shopId", "==", shopID)),
+    );
+
+    // Extract data from transactions query snapshot
+    const transactions = transactionsQuerySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    return transactions;
+  } catch (error) {
+    console.error("Error fetching transactions:", error);
+    return null;
+  }
+}
+
+export async function getTransactionProducts(transactionID: string) {
+  const transactionRef = doc(database, "transactions", transactionID);
+  const productsRef = collection(transactionRef, "products");
+
+  try {
+    // Get the transaction document
+    const transactionDoc = await getDoc(transactionRef);
+
+    // If the transaction document exists
+    if (transactionDoc.exists()) {
+      // Get the items from the sub-collection
+      const productsQuerySnapshot = await getDocs(productsRef);
+
+      // Extract data from items query snapshot
+      const products = productsQuerySnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      return products;
+    } else {
+      // Handle the case where the transaction document doesn't exist
+      console.error("Transaction not found");
+      return null;
+    }
+  } catch (error) {
+    // Handle any errors that occurred during the fetch
+    console.error("Error fetching transaction products:", error);
+    return null;
   }
 }

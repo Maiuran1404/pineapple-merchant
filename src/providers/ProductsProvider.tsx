@@ -1,6 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import React, { createContext, useCallback, useState } from "react";
-import { addStoreItem, getStoreItems, removeStoreItem } from "~/apiEndoints";
+import {
+  addStoreItem,
+  getStoreItems,
+  removeStoreItem,
+  updateStoreItem,
+} from "~/apiEndoints";
 import type { ItemProps } from "~/constants/orders";
 import { sampleProducts } from "~/constants/sampleProducts";
 import useStore from "~/hooks/useStore";
@@ -38,11 +43,20 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
   const addProduct = useCallback(
     async (product: ItemProps) => {
       try {
-        await addStoreItem(store?.id, product);
+        const resp = await addStoreItem(store?.id, product);
+
+        if (resp) {
+          await queryClient.invalidateQueries({
+            queryKey: ["products", store.id],
+          });
+        }
+
+        return resp;
       } catch (err) {
         console.error(err);
+        return null;
       } finally {
-        queryClient.invalidateQueries({
+        await queryClient.invalidateQueries({
           queryKey: ["products", store.id],
         });
       }
@@ -53,11 +67,15 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
   const removeProduct = useCallback(
     async (product: ItemProps) => {
       try {
-        await removeStoreItem(store?.id, product.id);
+        await removeStoreItem(store?.id, product.id).then(() => {
+          void queryClient.invalidateQueries({
+            queryKey: ["products", store.id],
+          });
+        });
       } catch (err) {
         console.error(err);
       } finally {
-        queryClient.invalidateQueries({
+        await queryClient.invalidateQueries({
           queryKey: ["products", store.id],
         });
       }
@@ -65,13 +83,28 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
     [store, queryClient],
   );
 
-  function updateProduct(updatedProduct: ItemProps) {
-    const productIndex = productss.findIndex((p) => p.id === updatedProduct.id);
-    const newProducts = [...productss];
+  const updateProduct = useCallback(
+    async (updatedProduct: ItemProps) => {
+      try {
+        const resp = await updateStoreItem(store?.id, updatedProduct);
+        if (resp) {
+          await queryClient.invalidateQueries({
+            queryKey: ["products", store.id],
+          });
+        }
 
-    newProducts[productIndex] = updatedProduct;
-    setProducts(newProducts);
-  }
+        return resp;
+      } catch (err) {
+        console.error(err);
+        return null;
+      } finally {
+        await queryClient.invalidateQueries({
+          queryKey: ["products", store.id],
+        });
+      }
+    },
+    [store, queryClient],
+  );
 
   const value = {
     isLoading,
