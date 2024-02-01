@@ -319,3 +319,18 @@ export function subscribeToOrdersRealTime(callback) {
   // Return the unsubscribe function to allow the caller to unsubscribe from the updates
   return unsubscribe;
 }
+
+export async function updateOrderStatus(orderId, newStatus) {
+  const orderRef = doc(database, "orders", orderId);
+
+  try {
+    await updateDoc(orderRef, {
+      status: newStatus
+    });
+    console.log(`Order ${orderId} status updated to ${newStatus}`);
+    return true;
+  } catch (error) {
+    console.error("Error updating order status: ", error);
+    return false;
+  }
+}

@@ -1,25 +1,29 @@
-import { motion } from 'framer-motion';
-import { useState } from 'react';
-import { clsx } from 'clsx';
+import { motion } from "framer-motion";
+import { useState } from "react";
+import { clsx } from "clsx";
+import { updateOrderStatus } from "~/apiEndoints";
 
 // Assuming you have a utility to map statuses to Tailwind CSS classes
 // import { statusToColor } from '~/utils';
 
 // Example of status to color mapping utility
 const statusToColor = {
-  READY: 'bg-green-100 text-green-800',
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  COMPLETE: 'bg-blue-100 text-blue-800',
+  READY: "bg-green-100 text-green-800",
+  PENDING: "bg-yellow-100 text-yellow-800",
+  COMPLETE: "bg-blue-100 text-blue-800",
   // Add other statuses as needed
 };
 
 function Order({ order }) {
   const [orderStatus, setOrderStatus] = useState(order.status);
 
-  // Example of function to handle status change, adjust based on your logic
-  const handleStatusChange = (newStatus) => {
-    setOrderStatus(newStatus);
-    // Add logic to update the order status in your database
+  const handleStatusChange = async () => {
+    const success = await updateOrderStatus(order.id, "COMPLETE");
+    if (success) {
+      setOrderStatus("COMPLETE");
+    } else {
+      // Handle the error case (e.g., show a message to the user)
+    }
   };
 
   return (
@@ -28,17 +32,17 @@ function Order({ order }) {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="p-4 border rounded-lg shadow hover:shadow-md transition"
+      className="rounded-lg border p-4 shadow transition hover:shadow-md"
     >
-      <div className="flex justify-between items-center mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold">{order.buyerName}</h3>
           <p className="text-gray-600">{order.shopName}</p>
         </div>
         <div
           className={clsx(
-            'px-2 py-1 rounded-full text-sm font-semibold',
-            statusToColor[orderStatus]
+            "rounded-full px-2 py-1 text-sm font-semibold",
+            statusToColor[orderStatus],
           )}
         >
           {orderStatus}
@@ -50,10 +54,10 @@ function Order({ order }) {
         ))}
       </ul> */}
       <div className="flex justify-end">
-        {orderStatus !== 'COMPLETE' && (
+        {orderStatus !== "COMPLETE" && (
           <button
-            onClick={() => handleStatusChange('COMPLETE')}
-            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            onClick={handleStatusChange}
+            className="rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
           >
             Mark as Complete
           </button>
@@ -62,6 +66,5 @@ function Order({ order }) {
     </motion.div>
   );
 }
-
 
 export default Order;
