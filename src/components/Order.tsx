@@ -56,22 +56,22 @@ function Order({
       <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
         <div className="flex items-center">
           <div className="h-11 w-11 flex-shrink-0">
-            <Image
+            {/* <Image
               className="h-12 w-12 rounded-lg"
               src={order.item.image}
               alt={order.item.alt}
-            />
+            /> */}
           </div>
           <div className="ml-4">
-            <div className="font-medium text-gray-900">{order.item.name}</div>
-            <div className="mt-1 font-mono text-gray-500">{order.item.id}</div>
+            <div className="font-medium text-gray-900">{order.buyerName}</div>
+            <div className="mt-1 font-mono text-gray-500">{order.buyerId}</div>
           </div>
         </div>
       </td>
-      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+      {/* <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
         <div className="text-gray-900">{order.customer.name}</div>
         <div className="mt-1 font-mono text-gray-500">{order.customer.id}</div>
-      </td>
+      </td> */}
       <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
         <div
           className={clsx(
@@ -109,7 +109,7 @@ function Order({
             type="button"
             className="rounded-md bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
           >
-            Complete
+            Klar ✅
           </button>
         )}
       </td>

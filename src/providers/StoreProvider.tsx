@@ -4,6 +4,7 @@ import { getStore } from "~/apiEndoints";
 import { useUser } from "./UserProvider";
 
 interface StoreProps {
+  id(id: any, setOrders: React.Dispatch<React.SetStateAction<import("../constants/orders").OrderProps[]>>): unknown;
   uid: string;
   name: string;
   address: string;

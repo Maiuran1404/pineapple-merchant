@@ -10,10 +10,12 @@ import {
   updateDoc,
   where,
   type DocumentData,
+  onSnapshot,
+  FirestoreError,
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
-import { ItemProps } from "./constants/orders";
+import { ItemProps, OrderProps } from "./constants/orders";
 
 export async function getClerkInFirestore(
   user: UserInfo | null,
@@ -293,4 +295,27 @@ export async function getTransactionProducts(transactionID: string) {
     console.error("Error fetching transaction products:", error);
     return null;
   }
+}
+
+export function subscribeToOrdersRealTime(callback) {
+  const ordersRef = collection(database, "orders");
+
+  const unsubscribe = onSnapshot(ordersRef, (snapshot) => {
+    const orders = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+
+    // No need to check if orders.length > 0, directly call the callback
+    // This ensures that even an empty orders array is handled correctly
+    callback(orders);
+  }, (error) => {
+    // Error handling
+    console.error("Error listening to orders updates:", error);
+    // Assuming you want to handle errors as well, adjust your callback to accept an error parameter
+    callback([], error);
+  });
+
+  // Return the unsubscribe function to allow the caller to unsubscribe from the updates
+  return unsubscribe;
 }
