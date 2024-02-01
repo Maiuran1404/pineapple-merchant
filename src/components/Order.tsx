@@ -26,6 +26,11 @@ function Order({ order }) {
     }
   };
 
+  // Helper function to format the product options nicely
+  const formatProductOptions = (options) => {
+    return options ? Object.entries(options).map(([key, value]) => `${key}: ${value}`).join(', ') : '';
+  };
+
   return (
     <motion.div
       layout
@@ -48,12 +53,27 @@ function Order({ order }) {
           {orderStatus}
         </div>
       </div>
-      {/* <ul className="list-disc pl-5 mb-4">
-        {order.products.map((product, index) => (
-          <li key={index} className="text-gray-700">{product}</li>
-        ))}
-      </ul> */}
-      <div className="flex justify-end">
+      <div className="space-y-4">
+      {order.products && order.products.map((product, index) => ( // Check if order.products is defined
+        <div key={index} className="border-b last:border-b-0">
+          <div className="flex justify-between">
+            <div>
+              <h4 className="text-md font-bold">{product.name}</h4>
+              <p className="text-sm text-gray-500">{formatProductOptions(product.options)}</p>
+            </div>
+            <div className="text-right">
+              <p className="font-semibold">{product.quantity} x ${product.price}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+      {order.products && // Check if order.products is defined
+        <div className="text-lg font-bold text-right">
+          Total: ${order.products.reduce((total, product) => total + (product.quantity * product.price), 0).toFixed(2)}
+        </div>
+      }
+    </div>
+      <div className="flex justify-end mt-4">
         {orderStatus !== "COMPLETE" && (
           <button
             onClick={handleStatusChange}
