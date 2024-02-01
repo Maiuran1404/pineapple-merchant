@@ -1,12 +1,11 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
-import { clsx } from "clsx";
+import clsx from "clsx";
 import { updateOrderStatus } from "~/apiEndoints";
 
 // Assuming you have a utility to map statuses to Tailwind CSS classes
 // import { statusToColor } from '~/utils';
 
-// Example of status to color mapping utility
 const statusToColor = {
   READY: "bg-green-100 text-green-800",
   PENDING: "bg-yellow-100 text-yellow-800",
@@ -26,7 +25,6 @@ function Order({ order }) {
     }
   };
 
-  // Helper function to format the product options nicely
   const formatProductOptions = (options) => {
     return options ? Object.entries(options).map(([key, value]) => `${key}: ${value}`).join(', ') : '';
   };
@@ -39,6 +37,11 @@ function Order({ order }) {
       exit={{ opacity: 0 }}
       className="rounded-lg border p-4 shadow transition hover:shadow-md"
     >
+      {order.partyId && (
+        <div className="p-2 bg-purple-200 text-purple-800 text-sm font-semibold rounded-t-lg">
+          Group purchase
+        </div>
+      )}
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold">{order.buyerName}</h3>
@@ -54,25 +57,25 @@ function Order({ order }) {
         </div>
       </div>
       <div className="space-y-4">
-      {order.products && order.products.map((product, index) => ( // Check if order.products is defined
-        <div key={index} className="border-b last:border-b-0">
-          <div className="flex justify-between">
-            <div>
-              <h4 className="text-md font-bold">{product.name}</h4>
-              <p className="text-sm text-gray-500">{formatProductOptions(product.options)}</p>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold">{product.quantity} x ${product.price}</p>
+        {order.products && order.products.map((product, index) => (
+          <div key={index} className="border-b last:border-b-0">
+            <div className="flex justify-between">
+              <div>
+                <h4 className="text-md font-bold">{product.name}</h4>
+                <p className="text-sm text-gray-500">{formatProductOptions(product.options)}</p>
+              </div>
+              <div className="text-right">
+                <p className="font-semibold">{product.quantity} x ${product.price}</p>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
-      {order.products && // Check if order.products is defined
-        <div className="text-lg font-bold text-right">
-          Total: ${order.products.reduce((total, product) => total + (product.quantity * product.price), 0).toFixed(2)}
-        </div>
-      }
-    </div>
+        ))}
+        {order.products && (
+          <div className="text-lg font-bold text-right">
+            Total: ${order.products.reduce((total, product) => total + (product.quantity * product.price), 0).toFixed(2)}
+          </div>
+        )}
+      </div>
       <div className="flex justify-end mt-4">
         {orderStatus !== "COMPLETE" && (
           <button
