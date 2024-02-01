@@ -1,194 +1,67 @@
-"use client";
-import { clsx } from "clsx";
-import { motion, useAnimation } from "framer-motion";
-import Image from "next/image";
-import Moment from "react-moment";
-import type { OrderProps, OrderStatusType } from "~/constants/orders";
-import { statuses } from "~/constants/statuses";
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { clsx } from 'clsx';
 
-const variants = {
-  exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } },
+// Assuming you have a utility to map statuses to Tailwind CSS classes
+// import { statusToColor } from '~/utils';
+
+// Example of status to color mapping utility
+const statusToColor = {
+  READY: 'bg-green-100 text-green-800',
+  PENDING: 'bg-yellow-100 text-yellow-800',
+  COMPLETE: 'bg-blue-100 text-blue-800',
+  // Add other statuses as needed
 };
 
-function longerThanAWeekAgo(date: Date) {
-  const weekAgo = new Date();
-  weekAgo.setDate(weekAgo.getDate() - 7);
-  return date < weekAgo;
-}
+function Order({ order }) {
+  const [orderStatus, setOrderStatus] = useState(order.status);
 
-function OrderTime({ date }: { date: Date }) {
-  const isOld = longerThanAWeekAgo(date);
-
-  if (isOld) {
-    return <Moment format="DD. MMMM, YYYY HH:MM">{String(date)}</Moment>;
-  }
-
-  return <Moment fromNow>{String(date)}</Moment>;
-}
-
-function Order({
-  order,
-  changeStatus,
-}: {
-  order: OrderProps;
-  changeStatus: (id: string, newStatus: OrderStatusType) => void;
-}) {
-  const controls = useAnimation();
-  const customer = order.customer;
-
-  function handleCompleteOrder() {
-    if (typeof window === "undefined") return;
-    window.alert(`Order ${order.id} completed!`);
-    controls
-      .start({ opacity: 0, scale: 0.8, transition: { duration: 0.3 } })
-      .then(() => {
-        changeStatus(order.id, "complete");
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-  }
-
-  const isComplete = order.status === "complete";
+  // Example of function to handle status change, adjust based on your logic
+  const handleStatusChange = (newStatus) => {
+    setOrderStatus(newStatus);
+    // Add logic to update the order status in your database
+  };
 
   return (
-    <motion.tr layout variants={variants}>
-      <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
-        <div className="flex items-center">
-          <div className="h-11 w-11 flex-shrink-0">
-            {/* <Image
-              className="h-12 w-12 rounded-lg"
-              src={order.item.image}
-              alt={order.item.alt}
-            /> */}
-          </div>
-          <div className="ml-4">
-            <div className="font-medium text-gray-900">{order.buyerName}</div>
-            <div className="mt-1 font-mono text-gray-500">{order.buyerId}</div>
-          </div>
+    <motion.div
+      layout
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="p-4 border rounded-lg shadow hover:shadow-md transition"
+    >
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <h3 className="text-lg font-bold">{order.buyerName}</h3>
+          <p className="text-gray-600">{order.shopName}</p>
         </div>
-      </td>
-      {/* <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-        <div className="text-gray-900">{order.customer.name}</div>
-        <div className="mt-1 font-mono text-gray-500">{order.customer.id}</div>
-      </td> */}
-      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
         <div
           className={clsx(
-            statuses[order.status],
-            "w-fit rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
+            'px-2 py-1 rounded-full text-sm font-semibold',
+            statusToColor[orderStatus]
           )}
         >
-          {order.status}
-        </div>
-      </td>
-      <td className="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-        <OrderTime date={order.date} />
-      </td>
-      <td className="relative flex justify-end whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-        {isComplete ? (
-          <div className="w-fit rounded-full bg-gray-100 p-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-green-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-          </div>
-        ) : (
-          <button
-            onClick={handleCompleteOrder}
-            type="button"
-            className="rounded-md bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
-          >
-            Klar ✅
-          </button>
-        )}
-      </td>
-    </motion.tr>
-  );
-
-  return (
-    <motion.li
-      layout
-      variants={variants}
-      className="overflow-hidden rounded-xl border border-gray-200"
-    >
-      <div className="flex items-center justify-between border-b border-gray-900/5 bg-gray-50 p-6">
-        <div className="flex items-center gap-x-4">
-          <Image
-            src={order.item.image}
-            alt={order.item.name}
-            className="h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10"
-          />
-          <div className="text-sm font-medium leading-6 text-gray-900">
-            {customer.name}
-          </div>
-        </div>
-        <div>
-          {isComplete ? (
-            <div className="rounded-full bg-gray-100 p-3">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-green-500"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-          ) : (
-            <button
-              onClick={handleCompleteOrder}
-              type="button"
-              className="rounded-md bg-indigo-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Complete
-            </button>
-          )}
+          {orderStatus}
         </div>
       </div>
-
-      <dl className="-my-3 divide-y divide-gray-100 px-6 py-4 text-sm leading-6">
-        <div className="flex justify-between gap-x-4 py-3">
-          <dt className="text-gray-500">Placed</dt>
-          <dd className="text-gray-700">
-            <OrderTime date={order.date} />
-          </dd>
-        </div>
-        <div className="flex justify-between gap-x-4 py-3">
-          <dt className="text-gray-500">Quantity</dt>
-          <div className="font-medium text-gray-900">{order.quantity}</div>
-        </div>
-        <div className="flex justify-between gap-x-4 py-3">
-          <dt className="text-gray-500">Status</dt>
-
-          <div
-            className={clsx(
-              statuses[order.status],
-              "rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset",
-            )}
+      {/* <ul className="list-disc pl-5 mb-4">
+        {order.products.map((product, index) => (
+          <li key={index} className="text-gray-700">{product}</li>
+        ))}
+      </ul> */}
+      <div className="flex justify-end">
+        {orderStatus !== 'COMPLETE' && (
+          <button
+            onClick={() => handleStatusChange('COMPLETE')}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
           >
-            {order.status}
-          </div>
-        </div>
-      </dl>
-    </motion.li>
+            Mark as Complete
+          </button>
+        )}
+      </div>
+    </motion.div>
   );
 }
+
 
 export default Order;
