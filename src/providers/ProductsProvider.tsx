@@ -5,7 +5,7 @@ import {
   getStoreItems,
   removeStoreItem,
   updateStoreItem,
-} from "~/apiEndoints";
+} from "~/apiEndpoints";
 import type { ItemProps } from "~/constants/orders";
 import { sampleProducts } from "~/constants/sampleProducts";
 import useStore from "~/hooks/useStore";

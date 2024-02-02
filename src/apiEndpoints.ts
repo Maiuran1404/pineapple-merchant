@@ -10,10 +10,31 @@ import {
   updateDoc,
   where,
   type DocumentData,
+  onSnapshot,
+  FirestoreError,
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
-import { ItemProps } from "./constants/orders";
+import { ItemProps, OrderProps } from "./constants/orders";
+
+interface Order {
+  id: string;
+  // Add other fields expected in an order, with appropriate types
+  // For example, assuming each order has a 'total' and 'createdAt' field
+  total: number;
+  createdAt: Date; // or string if it's in ISO format etc.
+  [key: string]: any; // Optional: use this line if orders may have additional dynamic keys
+}
+
+// Define the interface for the FormData that this endpoint will accept
+interface FormData {
+  // Define all the fields you expect in the form data
+  userId: string;
+  items: Array<{ productId: string; quantity: number; }>;
+  total: number;
+  createdAt: Date | string;
+  // Add other fields as necessary
+}
 
 export async function getClerkInFirestore(
   user: UserInfo | null,
@@ -292,5 +313,67 @@ export async function getTransactionProducts(transactionID: string) {
     // Handle any errors that occurred during the fetch
     console.error("Error fetching transaction products:", error);
     return null;
+  }
+}
+
+export function subscribeToOrdersRealTime(shopId: string, callback: (orders: Order[], error?: Error) => void) {
+  const ordersRef = collection(database, "orders");
+
+  // Apply a where clause to filter orders by shopId
+  const filteredOrdersRef = query(ordersRef, where("shopId", "==", shopId));
+
+  return onSnapshot(
+    filteredOrdersRef,
+    (snapshot) => {
+      const orders = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      
+      // Check if there are orders before calling the callback
+      if (orders.length > 0) {
+        callback(orders);
+      } else {
+        // Handle the case when there are no orders
+        // You can choose to pass an empty array or handle it differently based on your requirements
+        callback([], new Error("No orders found"));
+      }
+    },
+    (error) => {
+      console.error("Error listening to orders updates:", error);
+      callback([], error); // Call callback with empty array and error
+    }
+  );
+}
+
+export async function updateOrderStatus(orderId: string, newStatus: string) {
+  const orderRef = doc(database, "orders", orderId);
+
+  try {
+    await updateDoc(orderRef, {
+      status: newStatus
+    });
+    console.log(`Order ${orderId} status updated to ${newStatus}`);
+    return true;
+  } catch (error) {
+    console.error("Error updating order status: ", error);
+    return false;
+  }
+}
+
+// Function to add form data to Firestore
+export async function addFormDataToFirestore(formData: FormData): Promise<{ success: boolean; message: string; }> {
+  try {
+    // Generate a new document reference within the "orders" collection
+    const docRef = doc(collection(database, "shops"));
+
+    // Set the document with the provided form data
+    await setDoc(docRef, formData);
+
+    console.log("FormData added to Firestore with ID:", docRef.id);
+    return { success: true, message: `FormData added successfully with ID: ${docRef.id}` };
+  } catch (error) {
+    console.error("Error adding FormData to Firestore:", error);
+    return { success: false, message: `Error adding FormData to Firestore: ${error}` };
   }
 }
