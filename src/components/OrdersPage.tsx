@@ -27,7 +27,7 @@ function OrdersPage() {
 
   // Filter orders by status
   const ordersPlaced = orders.filter(order => order.status === 'ORDER_PLACED');
-  const ordersComplete = orders.filter(order => order.status === 'COMPLETE');
+  const ordersComplete = orders.filter(order => order.status === 'READY');
 
   return (
     <div className="h-screen w-full"> 
