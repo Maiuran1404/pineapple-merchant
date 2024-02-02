@@ -315,7 +315,7 @@ export async function getTransactionProducts(transactionID: string) {
   }
 }
 
-export function subscribeToOrdersRealTime(shopId: string, callback: (orders: Order[], error?: Error) => void) {
+export function subscribeToOrdersRealTime(shopId: string, callback: (orders: Order[] | null, error?: FirestoreError) => void) {
   const ordersRef = collection(database, "orders");
 
   // Apply a where clause to filter orders by shopId
@@ -324,9 +324,9 @@ export function subscribeToOrdersRealTime(shopId: string, callback: (orders: Ord
   return onSnapshot(
     filteredOrdersRef,
     (snapshot) => {
-      const orders = snapshot.docs.map(doc => ({
+      const orders: Order[] = snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data(),
+        ...doc.data() as Omit<Order, 'id'>, // Cast the data to match the Order type, excluding 'id' which is added separately
       }));
       
       // Check if there are orders before calling the callback
@@ -334,13 +334,12 @@ export function subscribeToOrdersRealTime(shopId: string, callback: (orders: Ord
         callback(orders);
       } else {
         // Handle the case when there are no orders
-        // You can choose to pass an empty array or handle it differently based on your requirements
-        callback([], new Error("No orders found"));
+        callback(null); // Using FirestoreError for consistency with Firestore's error handling
       }
     },
     (error) => {
       console.error("Error listening to orders updates:", error);
-      callback([], error); // Call callback with empty array and error
+      callback(null, error); // Call callback with null and error
     }
   );
 }
