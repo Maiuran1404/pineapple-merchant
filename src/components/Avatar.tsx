@@ -1,14 +1,14 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { BiLogOut } from "react-icons/bi";
-import { useOutsideClickEvent } from "~/hooks/useOutsideClickEvent";
+// import { useOutsideClickEvent } from "~/hooks/useOutsideClickEvent";
 import { useUser } from "~/providers/UserProvider";
 
 function Avatar() {
   const ref = useRef(null);
   const { user, signOut } = useUser();
   const [expanded, setExpanded] = useState(false);
-  useOutsideClickEvent(ref, () => setExpanded(false));
+  // useOutsideClickEvent(ref, () => setExpanded(false));
 
   if (!user) return null;
 
