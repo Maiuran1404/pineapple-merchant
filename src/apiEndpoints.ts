@@ -17,6 +17,25 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
 import { ItemProps, OrderProps } from "./constants/orders";
 
+interface Order {
+  id: string;
+  // Add other fields expected in an order, with appropriate types
+  // For example, assuming each order has a 'total' and 'createdAt' field
+  total: number;
+  createdAt: Date; // or string if it's in ISO format etc.
+  [key: string]: any; // Optional: use this line if orders may have additional dynamic keys
+}
+
+// Define the interface for the FormData that this endpoint will accept
+interface FormData {
+  // Define all the fields you expect in the form data
+  userId: string;
+  items: Array<{ productId: string; quantity: number; }>;
+  total: number;
+  createdAt: Date | string;
+  // Add other fields as necessary
+}
+
 export async function getClerkInFirestore(
   user: UserInfo | null,
 ): Promise<DocumentData | null> {
@@ -297,7 +316,7 @@ export async function getTransactionProducts(transactionID: string) {
   }
 }
 
-export function subscribeToOrdersRealTime(shopId: string, callback: (orders: any[], error?: Error) => void) {
+export function subscribeToOrdersRealTime(shopId: string, callback: (orders: Order[], error?: Error) => void) {
   const ordersRef = collection(database, "orders");
 
   // Apply a where clause to filter orders by shopId
@@ -327,10 +346,7 @@ export function subscribeToOrdersRealTime(shopId: string, callback: (orders: any
   );
 }
 
-
-
-
-export async function updateOrderStatus(orderId, newStatus) {
+export async function updateOrderStatus(orderId: string, newStatus: string) {
   const orderRef = doc(database, "orders", orderId);
 
   try {
@@ -342,5 +358,22 @@ export async function updateOrderStatus(orderId, newStatus) {
   } catch (error) {
     console.error("Error updating order status: ", error);
     return false;
+  }
+}
+
+// Function to add form data to Firestore
+export async function addFormDataToFirestore(formData: FormData): Promise<{ success: boolean; message: string; }> {
+  try {
+    // Generate a new document reference within the "orders" collection
+    const docRef = doc(collection(database, "shops"));
+
+    // Set the document with the provided form data
+    await setDoc(docRef, formData);
+
+    console.log("FormData added to Firestore with ID:", docRef.id);
+    return { success: true, message: `FormData added successfully with ID: ${docRef.id}` };
+  } catch (error) {
+    console.error("Error adding FormData to Firestore:", error);
+    return { success: false, message: `Error adding FormData to Firestore: ${error}` };
   }
 }

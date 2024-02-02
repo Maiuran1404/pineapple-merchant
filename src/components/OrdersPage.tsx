@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { subscribeToOrdersRealTime } from "~/apiEndoints";
+import { subscribeToOrdersRealTime } from "~/apiEndpoints";
 import Container from "~/components/Container";
 import Order from "~/components/Order";
 import Empty from "./Empty";

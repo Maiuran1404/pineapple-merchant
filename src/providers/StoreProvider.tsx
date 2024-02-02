@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { createContext } from "react";
-import { getStore } from "~/apiEndoints";
+import { getStore } from "~/apiEndpoints";
 import { useUser } from "./UserProvider";
 
 interface StoreProps {
