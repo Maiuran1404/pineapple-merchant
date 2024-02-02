@@ -71,26 +71,40 @@ export default function EditProductModal({
   function clearFile() {
     setImage(undefined);
     setImagePreview(null);
-
-    // Reset the form to clear the file input
-    formRef.current.reset();
+  
+    // Check if formRef.current is not null before calling reset
+    if (formRef.current !== null) {
+      formRef.current.reset();
+    }
   }
+  
 
-  async function handleApplyChanges() {
-    setIsLoading(true);
-    await updateProduct({
-      ...product,
-      name,
-      price: Number(price),
-      description,
-      image,
-      imageAlt: image?.name,
-    });
-
-    setOpen(false);
-    setIsLoading(false);
-  }
-
+  // async function handleApplyChanges() {
+  //   setIsLoading(true);
+  
+  //   if (product?.id) {
+  //     // Await the async operation to ensure it completes before proceeding
+  //     await updateProduct({
+  //       ...product,
+  //       name,
+  //       price: Number(price),
+  //       description,
+  //       image,
+  //       imageAlt: image?.name,
+  //     } as ItemProps); // Assert that the object matches `ItemProps`
+      
+  //   } else {
+  //     // Handle the case where product.id is undefined
+  //     // Maybe show an error message or ensure this function can't be called without a valid id
+  //     console.error("Product ID is undefined, cannot update product.");
+  //     // Implement your logic for handling this error case
+  //   }
+  
+  //   setOpen(false);
+  //   setIsLoading(false);
+  // }
+  
+  
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog
@@ -270,13 +284,13 @@ export default function EditProductModal({
                 </form>
 
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                  <button
+                  {/* <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 sm:col-start-2"
                     onClick={handleApplyChanges}
                   >
                     Apply changes
-                  </button>
+                  </button> */}
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
