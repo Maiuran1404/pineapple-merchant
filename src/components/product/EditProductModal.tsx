@@ -253,7 +253,7 @@ export default function EditProductModal({
                             Photo
                           </label>
                           <div className="mt-2 flex items-center gap-x-3">
-                            <div className="relative h-12 w-12 rounded-full border border-gray-300 bg-gray-300 text-gray-300">
+                            {/* <div className="relative h-12 w-12 rounded-full border border-gray-300 bg-gray-300 text-gray-300">
                               {imagePreview && (
                                 <img
                                   src={imagePreview}
@@ -262,7 +262,7 @@ export default function EditProductModal({
                                   aria-hidden="true"
                                 />
                               )}
-                            </div>
+                            </div> */}
                             <form ref={formRef}>
                               <input
                                 type="file"
