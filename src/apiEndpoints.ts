@@ -173,7 +173,7 @@ export async function addStoreItem(shopID: string, item: ItemProps) {
     const newItemRef = await setDoc(doc(productsCollection), newItemData);
 
     // Log the newly created item's ID
-    console.log("New item added with ID:", newItemRef.id);
+    console.log("New item added with ID:", newItemRef);
 
     return newItemRef;
   } catch (error) {
