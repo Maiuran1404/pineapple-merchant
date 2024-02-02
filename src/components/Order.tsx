@@ -1,25 +1,23 @@
-import { motion } from "framer-motion";
-import { useState } from "react";
-import clsx from "clsx";
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import clsx from 'clsx';
 import { updateOrderStatus } from "~/apiEndoints";
-
-// Assuming you have a utility to map statuses to Tailwind CSS classes
-// import { statusToColor } from '~/utils';
 
 const statusToColor = {
   READY: "bg-green-100 text-green-800",
   PENDING: "bg-yellow-100 text-yellow-800",
   COMPLETE: "bg-blue-100 text-blue-800",
-  // Add other statuses as needed
+  PICKED_UP: "bg-gray-100 text-gray-800", // Add styling for the PICKED UP status
 };
 
 function Order({ order }) {
   const [orderStatus, setOrderStatus] = useState(order.status);
 
-  const handleStatusChange = async () => {
-    const success = await updateOrderStatus(order.id, "COMPLETE");
+  // Refactor to handle both COMPLETE and PICKED UP status changes
+  const handleStatusChange = async (newStatus) => {
+    const success = await updateOrderStatus(order.id, newStatus);
     if (success) {
-      setOrderStatus("COMPLETE");
+      setOrderStatus(newStatus);
     } else {
       // Handle the error case (e.g., show a message to the user)
     }
@@ -77,9 +75,16 @@ function Order({ order }) {
         )}
       </div>
       <div className="flex justify-end mt-4">
-        {orderStatus !== "COMPLETE" && (
+        {orderStatus === "COMPLETE" ? (
           <button
-            onClick={handleStatusChange}
+            onClick={() => handleStatusChange("PICKED_UP")}
+            className="ml-2 rounded bg-gray-600 px-4 py-2 text-white transition hover:bg-gray-700"
+          >
+            Mark as Picked Up
+          </button>
+        ) : orderStatus !== "PICKED UP" && (
+          <button
+            onClick={() => handleStatusChange("COMPLETE")}
             className="rounded bg-blue-600 px-4 py-2 text-white transition hover:bg-blue-700"
           >
             Mark as Complete
