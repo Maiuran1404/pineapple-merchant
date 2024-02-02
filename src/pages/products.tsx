@@ -34,11 +34,11 @@ function Products() {
         <div>
           <h2 className="sr-only">Products in your store</h2>
 
-          <ProductList
+          {/* <ProductList
             isLoading={isLoading}
             error={error}
             products={products}
-          />
+          /> */}
         </div>
       </form>
 

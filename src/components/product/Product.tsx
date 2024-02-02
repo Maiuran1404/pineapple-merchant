@@ -5,7 +5,7 @@ import { useState } from "react";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
 import { currency } from "~/constants/misc";
 import type { ItemProps } from "~/constants/orders";
-import useProducts from "~/hooks/useProducts";
+// import useProducts from "~/hooks/useProducts";
 import EditProductModal from "./EditProductModal";
 
 const variants = {

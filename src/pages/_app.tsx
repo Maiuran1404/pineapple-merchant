@@ -3,7 +3,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { type AppType } from "next/dist/shared/lib/utils";
 import Head from "next/head";
 import Header from "~/components/Header";
-import ProductsProvider from "~/providers/ProductsProvider";
+// import ProductsProvider from "~/providers/ProductsProvider";
 import StoreProvider from "~/providers/StoreProvider";
 import StoreStatusProvider from "~/providers/StoreStatusProvider";
 import { UserProvider } from "~/providers/UserProvider";
@@ -19,7 +19,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
         <QueryClientProvider client={queryClient}>
           <StoreProvider>
             <StoreStatusProvider>
-              <ProductsProvider>
+              {/* <ProductsProvider> */}
                 <>
                   <Head>
                     <title>Pineapple store</title>
@@ -32,7 +32,7 @@ const MyApp: AppType = ({ Component, pageProps }) => {
                   <Header />
                 </>
                 <Component {...pageProps} />
-              </ProductsProvider>
+              {/* </ProductsProvider> */}
             </StoreStatusProvider>
           </StoreProvider>
         </QueryClientProvider>

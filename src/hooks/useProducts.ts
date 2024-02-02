@@ -1,16 +1,16 @@
-import { useContext } from "react";
-import { ProductsContext } from "~/providers/ProductsProvider";
+// import { useContext } from "react";
+// import { ProductsContext } from "~/providers/ProductsProvider";
 
-function useProducts() {
-  const context = useContext(ProductsContext);
+// function useProducts() {
+//   const context = useContext(ProductsContext);
 
-  if (!context) {
-    throw new Error(
-      "useProducts must be used within a productsContextProvider",
-    );
-  }
+//   if (!context) {
+//     throw new Error(
+//       "useProducts must be used within a productsContextProvider",
+//     );
+//   }
 
-  return context;
-}
+//   return context;
+// }
 
-export default useProducts;
+// export default useProducts;
