@@ -5,19 +5,18 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
   where,
   type DocumentData,
-  onSnapshot,
-  FirestoreError,
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
-import { ItemProps, OrderProps } from "./constants/orders";
+import type { ItemProps } from "./constants/orders";
 
-export async function getClerkInFirestore(
+export async function getFirestoreUser(
   user: UserInfo | null,
 ): Promise<DocumentData | null> {
   if (!user?.uid) {
@@ -25,10 +24,10 @@ export async function getClerkInFirestore(
     return null;
   }
 
-  const clerkRef = doc(database, "storeclerk", user.uid);
+  const userDef = doc(database, "users", user.uid);
 
   try {
-    const docSnap = await getDoc(clerkRef);
+    const docSnap = await getDoc(userDef);
     if (docSnap.exists()) {
       // User exists in Firestore, retrieve their settings
       const fireStoreUser = docSnap.data();
@@ -41,10 +40,9 @@ export async function getClerkInFirestore(
         email: user.email,
         name: user.displayName,
         image: user.photoURL,
-        status: "pending",
       };
 
-      await setDoc(clerkRef, newUser);
+      await setDoc(userDef, newUser);
 
       console.log("User added to Firestore");
       return newUser; // User doesn't have any settings yet
@@ -70,25 +68,22 @@ export async function updateFirestoreCollection(
   }
 }
 
-export async function getStore(user: UserInfo | null) {
-  if (!user?.uid) {
-    console.error("User is undefined:", user);
+export async function getStore(storeID: string | null) {
+  if (!storeID) {
+    console.error("Store ID is undefined:", storeID);
     return null;
   }
 
-  const clerkRef = doc(database, "storeclerk", user.uid);
+  const storeRef = doc(database, "shops", storeID);
 
   try {
-    const clerk = await getDoc(clerkRef);
-    if (clerk.exists()) {
-      const clerkData = clerk.data();
-      const storeRef = doc(database, "shops", clerkData.storeID);
+    const store = await getDoc(storeRef);
 
-      const store = await getDoc(storeRef);
-      if (store.exists()) {
-        const fireStoreShop = { ...store.data(), id: store.id };
-        return fireStoreShop;
-      }
+    if (store.exists()) {
+      return store.data();
+    } else {
+      console.error("Store not found");
+      return null;
     }
   } catch (error) {
     console.error("Error checking user in Firestore:", error);
@@ -300,21 +295,25 @@ export async function getTransactionProducts(transactionID: string) {
 export function subscribeToOrdersRealTime(callback) {
   const ordersRef = collection(database, "orders");
 
-  const unsubscribe = onSnapshot(ordersRef, (snapshot) => {
-    const orders = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+  const unsubscribe = onSnapshot(
+    ordersRef,
+    (snapshot) => {
+      const orders = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
 
-    // No need to check if orders.length > 0, directly call the callback
-    // This ensures that even an empty orders array is handled correctly
-    callback(orders);
-  }, (error) => {
-    // Error handling
-    console.error("Error listening to orders updates:", error);
-    // Assuming you want to handle errors as well, adjust your callback to accept an error parameter
-    callback([], error);
-  });
+      // No need to check if orders.length > 0, directly call the callback
+      // This ensures that even an empty orders array is handled correctly
+      callback(orders);
+    },
+    (error) => {
+      // Error handling
+      console.error("Error listening to orders updates:", error);
+      // Assuming you want to handle errors as well, adjust your callback to accept an error parameter
+      callback([], error);
+    },
+  );
 
   // Return the unsubscribe function to allow the caller to unsubscribe from the updates
   return unsubscribe;
@@ -325,7 +324,7 @@ export async function updateOrderStatus(orderId, newStatus) {
 
   try {
     await updateDoc(orderRef, {
-      status: newStatus
+      status: newStatus,
     });
     console.log(`Order ${orderId} status updated to ${newStatus}`);
     return true;

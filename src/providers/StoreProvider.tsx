@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { createContext } from "react";
-import { getStore } from "~/apiEndoints";
+import React, { createContext, useEffect } from "react";
+import { getFirestoreUser, getStore } from "~/apiEndoints";
 import { useUser } from "./UserProvider";
 
 interface StoreProps {
-  id(id: any, setOrders: React.Dispatch<React.SetStateAction<import("../constants/orders").OrderProps[]>>): unknown;
+  id(
+    id: any,
+    setOrders: React.Dispatch<
+      React.SetStateAction<import("../constants/orders").OrderProps[]>
+    >,
+  ): unknown;
   uid: string;
   name: string;
   address: string;
@@ -30,20 +35,34 @@ export const StoreContext = createContext<StoreContextType | null>(null);
 
 function StoreProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
+  const [storeID, setStoreID] = React.useState<string | null>(null);
+
+  useEffect(() => {
+    async function fetchStoreID(): Promise<void> {
+      const fireStoreUser = await getFirestoreUser(user);
+
+      const storeID = (fireStoreUser?.storeId as string) ?? null;
+      setStoreID(storeID);
+    }
+
+    void fetchStoreID();
+  }, [user]);
 
   const {
     isLoading,
     error,
     data: store,
   } = useQuery({
-    queryKey: ["store", user?.uid],
-    queryFn: () => getStore(user),
-    enabled: !!user,
+    queryKey: ["store", storeID],
+    queryFn: () => getStore(storeID),
+    enabled: !!storeID,
   });
 
   function updateInfo(info: StoreProps) {
     console.log(info);
   }
+
+  console.log(store);
 
   const value = { isLoading, error, store, updateInfo };
 
