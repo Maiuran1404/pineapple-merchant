@@ -1,38 +1,44 @@
-import { useState } from 'react';
-import { addFormDataToFirestore } from '~/apiEndpoints'; // Adjust the path as necessary
+import { useState } from "react";
+import { addFormDataToFirestore } from "~/apiEndpoints"; // Adjust the path as necessary
+import { Shop } from "~/types";
 
 const Store = () => {
-  const [shop, setShop] = useState({
-    address: '',
-    contactInfo: { email: '', phone: '' },
+  const [shop, setShop] = useState<Shop>({
+    address: "",
+    contactInfo: { email: "", phone: "" },
     image: null,
-    location: '',
+    location: "",
     menu: {
-      description: '',
-      name: '',
-      optionTypes: [{ name: '', options: [{ description: '', name: '', price: 0 }] }],
+      description: "",
+      name: "",
+      optionTypes: [
+        { name: "", options: [{ description: "", name: "", price: 0 }] },
+      ],
     },
-    name: '',
+    name: "",
     openingHours: {
-      monday: { close: '', open: '' },
+      monday: { close: "", open: "" },
     },
-    stripeConnectedId: '',
+    stripeConnectedId: "",
   });
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      const response = await addFormDataToFirestore(shop); // Call your endpoint here
-      if (response.success) {
-        alert('Shop added successfully!');
-      } else {
-        throw new Error(response.message);
-      }
-    } catch (error) {
-      alert('Error adding shop:');
-    }
+
+    // Directly call the async function without await
+    addFormDataToFirestore(shop)
+      .then((response) => {
+        if (response.success) {
+          alert("Shop added successfully!");
+        } else {
+          throw new Error(response.message);
+        }
+      })
+      .catch((error) => {
+        alert("Error adding shop: ");
+      });
   };
-  
+
   // Input change handlers...
 
   return (

@@ -17,7 +17,7 @@ import {
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
 import { ItemProps, OrderProps } from "./constants/orders";
-import { TOrder } from "./types";
+import { Shop, TOrder } from "./types";
 
 // Define the interface for the FormData that this endpoint will accept
 interface FormData {
@@ -352,7 +352,7 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
   }
 }
 
-export async function addFormDataToFirestore(formData: FormData): Promise<{ success: boolean; message: string; }> {
+export async function addFormDataToFirestore(formData: Shop): Promise<{ success: boolean; message: string; }> {
   try {
     // Adjust the path to your Firestore database as needed
     const collectionRef = collection(database, "shops");
