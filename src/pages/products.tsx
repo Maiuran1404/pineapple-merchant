@@ -4,10 +4,10 @@ import Container from "~/components/Container";
 import EditProductModal from "~/components/product/EditProductModal";
 import Product from "~/components/product/Product";
 import type { ItemProps } from "~/constants/orders";
-import useProducts from "~/hooks/useProducts";
+// import useProducts from "~/hooks/useProducts";
 
 function Products() {
-  const { isLoading, error, products, addProduct } = useProducts();
+  // const { isLoading, error, products, addProduct } = useProducts();
   const [open, setOpen] = useState(false);
 
   function handleSetOpen(open: boolean) {
@@ -42,11 +42,11 @@ function Products() {
         </div>
       </form>
 
-      <EditProductModal
+      {/* <EditProductModal
         updateProduct={addProduct}
         open={open}
         setOpen={handleSetOpen}
-      />
+      /> */}
     </Container>
   );
 }
