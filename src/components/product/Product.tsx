@@ -5,7 +5,7 @@ import { useState } from "react";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
 import { currency } from "~/constants/misc";
 import type { ItemProps } from "~/constants/orders";
-// import useProducts from "~/hooks/useProducts";
+import useProducts from "~/hooks/useProducts";
 import EditProductModal from "./EditProductModal";
 
 const variants = {
@@ -13,19 +13,19 @@ const variants = {
 };
 
 function Product({ product }: { product: ItemProps }) {
-  const { removeProduct, updateProduct } = useProducts();
+  // const { removeProduct, updateProduct } = useProducts();
   const [outOfStock, setOutOfStock] = useState(false);
   const [open, setOpen] = useState(false);
 
-  function handleRemoveProduct(e: React.MouseEvent<HTMLButtonElement>) {
-    e.preventDefault();
-    const shouldRemove = window.confirm(
-      "Are you sure you want to remove this product?",
-    );
-    if (shouldRemove) {
-      removeProduct(product);
-    }
-  }
+  // function handleRemoveProduct(e: React.MouseEvent<HTMLButtonElement>) {
+  //   e.preventDefault();
+  //   const shouldRemove = window.confirm(
+  //     "Are you sure you want to remove this product?",
+  //   );
+  //   if (shouldRemove) {
+  //     removeProduct(product);
+  //   }
+  // }
 
   function handleToggleOutOfStock() {
     const shouldToggle = window.confirm(
@@ -64,13 +64,13 @@ function Product({ product }: { product: ItemProps }) {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <button
+            {/* <button
               title="Delete product"
               onClick={handleRemoveProduct}
               className="cursor-pointer rounded-full bg-gray-200 p-2 text-gray-600 hover:bg-red-500 hover:text-white"
             >
               <BiTrash size={20} />
-            </button>
+            </button> */}
             <button
               onClick={handleToggleModal}
               title="Edit product"
@@ -115,13 +115,13 @@ function Product({ product }: { product: ItemProps }) {
           </div>
         </dl>
       </motion.li>
-
+{/* 
       <EditProductModal
         product={product}
         updateProduct={updateProduct}
         open={open}
         setOpen={setOpen}
-      />
+      /> */}
     </>
   );
 }
