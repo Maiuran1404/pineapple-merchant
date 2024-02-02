@@ -1,14 +1,14 @@
-import { useContext } from "react";
-import { StoreContext } from "~/providers/StoreProvider";
+// import { useContext } from "react";
+// import { StoreContext } from "~/providers/StoreProvider";
 
-function useStore() {
-  const context = useContext(StoreContext);
+// function useStore() {
+//   const context = useContext(StoreContext);
 
-  if (!context) {
-    throw new Error("useStore must be used within a storeContextProvider");
-  }
+//   if (!context) {
+//     throw new Error("useStore must be used within a storeContextProvider");
+//   }
 
-  return context;
-}
+//   return context;
+// }
 
-export default useStore;
+// export default useStore;
