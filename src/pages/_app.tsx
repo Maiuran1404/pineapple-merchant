@@ -4,7 +4,7 @@ import { type AppType } from "next/dist/shared/lib/utils";
 import Head from "next/head";
 import Header from "~/components/Header";
 // import ProductsProvider from "~/providers/ProductsProvider";
-import StoreProvider from "~/providers/StoreProvider";
+// import StoreProvider from "~/providers/StoreProvider";
 import StoreStatusProvider from "~/providers/StoreStatusProvider";
 import { UserProvider } from "~/providers/UserProvider";
 
