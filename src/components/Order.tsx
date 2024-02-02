@@ -5,7 +5,10 @@ import { updateOrderStatus } from "~/apiEndpoints"; // Make sure to update the i
 import { format } from "date-fns";
 import { TOrder } from "~/types";
 
-
+// Assuming TOrder is defined elsewhere and imported appropriately
+interface OrderProps {
+  order: TOrder;
+}
 
 const statusToColor = {
   READY: "bg-green-100 text-green-800",
@@ -14,7 +17,8 @@ const statusToColor = {
   PICKED_UP: "bg-gray-100 text-gray-800",
 };
 
-function Order({ order }: { order: TOrder }) {
+// Adjusted to include OrderProps for type checking
+function Order({ order }: OrderProps) {
   const [orderStatus, setOrderStatus] = useState<string>(order.status);
 
   const handleStatusChange = async (newStatus: string) => {
