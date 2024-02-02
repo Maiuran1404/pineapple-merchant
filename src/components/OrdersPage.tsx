@@ -3,27 +3,15 @@ import { subscribeToOrdersRealTime } from "~/apiEndpoints";
 import Container from "~/components/Container";
 import Order from "~/components/Order";
 import Empty from "./Empty";
+import { TOrder } from "~/types";
 
 function OrdersPage() {
   // Adding TypeScript interface for order prop
-  interface OrderProps {
-    order: {
-      id: string;
-      status: string;
-      buyerName: string;
-      purchaseTime: { toDate: () => Date };
-      products: {
-        name: string;
-        options?: Record<string, string>;
-      }[];
-    };
-  }
-
-  const [orders, setOrders] = useState<OrderProps[]>([]);
+  const [orders, setOrders] = useState<TOrder[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const handleOrdersUpdate = (updatedOrders: OrderProps[], error: Error | string | null) => {
+    const handleOrdersUpdate = (updatedOrders: TOrder[], error: Error | string | null) => {
       if (error) {
         console.error("Error fetching orders:", error);
         return;

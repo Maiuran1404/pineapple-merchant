@@ -17,14 +17,7 @@ import {
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
 import { ItemProps, OrderProps } from "./constants/orders";
-
-interface Order {
-  id: string;
-  // Add other fields expected in an order, with appropriate types
-  // For example, assuming each order has a 'total' and 'createdAt' field
-  total: number;
-  createdAt: Date; // or string if it's in ISO format etc.
-}
+import { TOrder } from "./types";
 
 // Define the interface for the FormData that this endpoint will accept
 interface FormData {
@@ -315,7 +308,7 @@ export async function getTransactionProducts(transactionID: string) {
   }
 }
 
-export function subscribeToOrdersRealTime(shopId: string, callback: (orders: Order[] | null, error?: FirestoreError) => void) {
+export function subscribeToOrdersRealTime(shopId: string, callback: (orders: TOrder[] | null, error?: FirestoreError) => void) {
   const ordersRef = collection(database, "orders");
 
   // Apply a where clause to filter orders by shopId
@@ -324,9 +317,9 @@ export function subscribeToOrdersRealTime(shopId: string, callback: (orders: Ord
   return onSnapshot(
     filteredOrdersRef,
     (snapshot) => {
-      const orders: Order[] = snapshot.docs.map(doc => ({
+      const orders: TOrder[] = snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data() as Omit<Order, 'id'>, // Cast the data to match the Order type, excluding 'id' which is added separately
+        ...doc.data() as Omit<TOrder, 'id'>, // Cast the data to match the Order type, excluding 'id' which is added separately
       }));
       
       // Check if there are orders before calling the callback

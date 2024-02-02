@@ -3,20 +3,7 @@ import { useState } from "react";
 import clsx from "clsx";
 import { updateOrderStatus } from "~/apiEndpoints"; // Make sure to update the import path
 import { format } from "date-fns";
-
-// Adding TypeScript interface for order prop
-interface OrderProps {
-  order: {
-    id: string;
-    status: string;
-    buyerName: string;
-    purchaseTime: { toDate: () => Date };
-    products: {
-      name: string;
-      options?: Record<string, string>;
-    }[];
-  };
-}
+import { TOrder } from "~/types";
 
 const statusToColor = {
   READY: "bg-green-100 text-green-800",
@@ -26,7 +13,7 @@ const statusToColor = {
 };
 
 // Adjusted to include OrderProps for type checking
-function Order({ order }: OrderProps) {
+function Order({ order }: TOrder) {
   const [orderStatus, setOrderStatus] = useState<string>(order.status);
 
   const handleStatusChange = async (newStatus: string) => {
