@@ -41,7 +41,7 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   const signIn = async () => {
     // Sign in using a popup.

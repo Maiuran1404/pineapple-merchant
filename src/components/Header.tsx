@@ -1,3 +1,4 @@
+import { UserButton } from "@clerk/nextjs";
 import { Switch } from "@headlessui/react";
 import clsx from "clsx";
 import Image from "next/image";
@@ -6,7 +7,6 @@ import { useRouter } from "next/router";
 import { BiMenu } from "react-icons/bi";
 import useStoreStatus from "~/hooks/useStoreStatus";
 import pineapple from "~/images/pineapple.png";
-import Avatar from "./Avatar";
 import Banner from "./Banner";
 
 const navigation = [
@@ -103,7 +103,7 @@ export default function Header() {
                 </Switch>
               </Switch.Group>
 
-              <Avatar />
+              <UserButton />
             </div>
           </div>
         </nav>
