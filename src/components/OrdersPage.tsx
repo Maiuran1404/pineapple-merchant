@@ -4,6 +4,7 @@ import Container from "~/components/Container";
 import Order from "~/components/Order";
 import Empty from "./Empty";
 import { TOrder } from "~/types";
+import { FirestoreError } from "firebase/firestore";
 
 function OrdersPage() {
   // Adding TypeScript interface for order prop
@@ -11,15 +12,23 @@ function OrdersPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const handleOrdersUpdate = (updatedOrders: TOrder[], error: Error | string | null) => {
+    const handleOrdersUpdate = (
+      orders: TOrder[] | null,
+      error?: FirestoreError,
+    ) => {
       if (error) {
         console.error("Error fetching orders:", error);
         return;
       }
-      setOrders(updatedOrders);
+      if (orders) {
+        setOrders(orders);
+      } else {
+        // Handle the case when orders are null (e.g., no orders found or an error occurred)
+        console.log("No orders found or an error occurred");
+        setOrders([]); // You might want to clear the orders or handle this scenario differently
+      }
       setLoading(false);
     };
-
     const unsubscribe = subscribeToOrdersRealTime(
       "yhTqXHvykMTjepPZOxPs",
       handleOrdersUpdate,
