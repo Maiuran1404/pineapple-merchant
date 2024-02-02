@@ -74,7 +74,7 @@ const ProductList = ({
       </ul>
     );
 
-  if (error) return <div>An error has occurred: {error}</div>;
+  if (error) return <div>An error has occurred</div>;
 
   return (
     <ul role="list" className="flex flex-col gap-3">
