@@ -5,7 +5,7 @@ const Store = () => {
   const [shop, setShop] = useState({
     address: '',
     contactInfo: { email: '', phone: '' },
-    image: { blurHash: '', url: '' },
+    image: null,
     location: '',
     menu: {
       description: '',

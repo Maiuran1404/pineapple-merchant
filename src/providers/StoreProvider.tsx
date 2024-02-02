@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { createContext, useEffect } from "react";
-import { getFirestoreUser, getStore } from "~/apiEndoints";
+import { getStore } from "~/apiEndpoints";
 import { useUser } from "./UserProvider";
 
 interface StoreProps {
@@ -37,16 +37,16 @@ function StoreProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
   const [storeID, setStoreID] = React.useState<string | null>(null);
 
-  useEffect(() => {
-    async function fetchStoreID(): Promise<void> {
-      const fireStoreUser = await getFirestoreUser(user);
+  // useEffect(() => {
+  //   async function fetchStoreID(): Promise<void> {
+  //     // const fireStoreUser = await getFirestoreUser(user);
 
-      const storeID = (fireStoreUser?.storeId as string) ?? null;
-      setStoreID(storeID);
-    }
+  //     // const storeID = (fireStoreUser?.storeId as string) ?? null;
+  //     setStoreID(storeID);
+  //   }
 
-    void fetchStoreID();
-  }, [user]);
+  //   void fetchStoreID();
+  // }, [user]);
 
   const {
     isLoading,

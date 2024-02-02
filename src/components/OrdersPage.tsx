@@ -23,7 +23,7 @@ function OrdersPage() {
     return () => unsubscribe();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <div>Loading..</div>;
 
   // Filter orders by status
   const ordersPlaced = orders.filter(order => order.status === 'ORDER_PLACED');

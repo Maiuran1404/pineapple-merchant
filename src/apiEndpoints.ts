@@ -12,6 +12,7 @@ import {
   type DocumentData,
   onSnapshot,
   FirestoreError,
+  addDoc,
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
@@ -23,17 +24,14 @@ interface Order {
   // For example, assuming each order has a 'total' and 'createdAt' field
   total: number;
   createdAt: Date; // or string if it's in ISO format etc.
-  [key: string]: any; // Optional: use this line if orders may have additional dynamic keys
 }
 
 // Define the interface for the FormData that this endpoint will accept
 interface FormData {
-  // Define all the fields you expect in the form data
   userId: string;
   items: Array<{ productId: string; quantity: number; }>;
   total: number;
   createdAt: Date | string;
-  // Add other fields as necessary
 }
 
 export async function getClerkInFirestore(
@@ -89,32 +87,6 @@ export async function updateFirestoreCollection(
   }
 }
 
-export async function getStore(user: UserInfo | null) {
-  if (!user?.uid) {
-    console.error("User is undefined:", user);
-    return null;
-  }
-
-  const clerkRef = doc(database, "storeclerk", user.uid);
-
-  try {
-    const clerk = await getDoc(clerkRef);
-    if (clerk.exists()) {
-      const clerkData = clerk.data();
-      const storeRef = doc(database, "shops", clerkData.storeID);
-
-      const store = await getDoc(storeRef);
-      if (store.exists()) {
-        const fireStoreShop = { ...store.data(), id: store.id };
-        return fireStoreShop;
-      }
-    }
-  } catch (error) {
-    console.error("Error checking user in Firestore:", error);
-    return null; // Handle the error as needed
-  }
-}
-
 export async function getStoreItems(shopID: string) {
   const shopRef = doc(database, "shops", shopID);
   const productsRef = collection(shopRef, "menu");
@@ -146,6 +118,33 @@ export async function getStoreItems(shopID: string) {
     return null;
   }
 }
+
+export async function getStore(user: UserInfo | null) {
+  if (!user?.uid) {
+    console.error("User is undefined:", user);
+    return null;
+  }
+
+  const clerkRef = doc(database, "storeclerk", user.uid);
+
+  try {
+    const clerk = await getDoc(clerkRef);
+    if (clerk.exists()) {
+      const clerkData = clerk.data();
+      const storeRef = doc(database, "shops", clerkData.storeID);
+
+      const store = await getDoc(storeRef);
+      if (store.exists()) {
+        const fireStoreShop = { ...store.data(), id: store.id };
+        return fireStoreShop;
+      }
+    }
+  } catch (error) {
+    console.error("Error checking user in Firestore:", error);
+    return null; // Handle the error as needed
+  }
+}
+
 
 export async function addStoreItem(shopID: string, item: ItemProps) {
   try {
@@ -350,7 +349,7 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
   const orderRef = doc(database, "orders", orderId);
 
   try {
-    await updateDoc(orderRef, {
+    await updateDoc(orderRef, { 
       status: newStatus
     });
     console.log(`Order ${orderId} status updated to ${newStatus}`);
@@ -361,19 +360,20 @@ export async function updateOrderStatus(orderId: string, newStatus: string) {
   }
 }
 
-// Function to add form data to Firestore
 export async function addFormDataToFirestore(formData: FormData): Promise<{ success: boolean; message: string; }> {
   try {
-    // Generate a new document reference within the "orders" collection
-    const docRef = doc(collection(database, "shops"));
-
-    // Set the document with the provided form data
-    await setDoc(docRef, formData);
+    // Adjust the path to your Firestore database as needed
+    const collectionRef = collection(database, "shops");
+    const docRef = await addDoc(collectionRef, formData); // Directly use formData here
 
     console.log("FormData added to Firestore with ID:", docRef.id);
     return { success: true, message: `FormData added successfully with ID: ${docRef.id}` };
   } catch (error) {
     console.error("Error adding FormData to Firestore:", error);
-    return { success: false, message: `Error adding FormData to Firestore: ${error}` };
+
+    // Convert error to string
+    const errorMessage = typeof error === 'string' ? error : error instanceof Error ? error.message : String(error);
+
+    return { success: false, message: `Error adding FormData to Firestore: ${errorMessage}` };
   }
 }
