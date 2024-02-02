@@ -297,28 +297,38 @@ export async function getTransactionProducts(transactionID: string) {
   }
 }
 
-export function subscribeToOrdersRealTime(callback) {
+export function subscribeToOrdersRealTime(shopId: string, callback: (orders: any[], error?: Error) => void) {
   const ordersRef = collection(database, "orders");
 
-  const unsubscribe = onSnapshot(ordersRef, (snapshot) => {
-    const orders = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+  // Apply a where clause to filter orders by shopId
+  const filteredOrdersRef = query(ordersRef, where("shopId", "==", shopId));
 
-    // No need to check if orders.length > 0, directly call the callback
-    // This ensures that even an empty orders array is handled correctly
-    callback(orders);
-  }, (error) => {
-    // Error handling
-    console.error("Error listening to orders updates:", error);
-    // Assuming you want to handle errors as well, adjust your callback to accept an error parameter
-    callback([], error);
-  });
-
-  // Return the unsubscribe function to allow the caller to unsubscribe from the updates
-  return unsubscribe;
+  return onSnapshot(
+    filteredOrdersRef,
+    (snapshot) => {
+      const orders = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      
+      // Check if there are orders before calling the callback
+      if (orders.length > 0) {
+        callback(orders);
+      } else {
+        // Handle the case when there are no orders
+        // You can choose to pass an empty array or handle it differently based on your requirements
+        callback([], new Error("No orders found"));
+      }
+    },
+    (error) => {
+      console.error("Error listening to orders updates:", error);
+      callback([], error); // Call callback with empty array and error
+    }
+  );
 }
+
+
+
 
 export async function updateOrderStatus(orderId, newStatus) {
   const orderRef = doc(database, "orders", orderId);

@@ -18,7 +18,7 @@ function OrdersPage() {
       setLoading(false);
     };
 
-    const unsubscribe = subscribeToOrdersRealTime(handleOrdersUpdate);
+    const unsubscribe = subscribeToOrdersRealTime("yhTqXHvykMTjepPZOxPs", handleOrdersUpdate);
 
     return () => unsubscribe();
   }, []);
@@ -30,22 +30,15 @@ function OrdersPage() {
   const ordersComplete = orders.filter(order => order.status === 'COMPLETE');
 
   return (
+    <div className="h-screen w-full"> 
     <Container className="w-full max-w-none"> 
       <div className="flex flex-col gap-y-12">
         <div className="sm:flex sm:items-center">
-          <div className="sm:flex-auto">
-            <h1 className="text-base font-semibold leading-6 text-gray-900">
-              Orders final
-            </h1>
-            <p className="mt-2 text-sm text-gray-700">
-              Orders from customers will appear here.
-            </p>
-          </div>
         </div>
         <div className="flex gap-10">
           <div className="w-2/3"> {/* Adjusted for two-thirds and grid layout */}
             <h2 className="mb-4 text-lg font-semibold">Order Placed</h2>
-            <div className="grid grid-cols-2 gap-4"> {/* Grid layout for two items horizontally */}
+            <div className="grid grid-cols-1 gap-4"> {/* Grid layout for two items horizontally */}
               {ordersPlaced.length > 0 ? ordersPlaced.map((order) => (
                 <Order key={order.id} order={order} />
               )) : <Empty />}
@@ -62,6 +55,7 @@ function OrdersPage() {
         </div>
       </div>
     </Container>
+    </div>
   );
 }
 
