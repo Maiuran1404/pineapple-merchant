@@ -21,7 +21,7 @@ export default function EditProductModal({
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>(product?.name ?? "");
-  const [price, setPrice] = useState<number>(product?.price ?? "");
+  const [price, setPrice] = useState<number>(product?.price ?? 0);
   const [description, setDescription] = useState<string>(
     product?.description ?? "",
   );
