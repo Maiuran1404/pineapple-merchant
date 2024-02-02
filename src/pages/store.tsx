@@ -19,7 +19,7 @@ const Store = () => {
     stripeConnectedId: '',
   });
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       const response = await addFormDataToFirestore(shop); // Call your endpoint here
@@ -29,10 +29,10 @@ const Store = () => {
         throw new Error(response.message);
       }
     } catch (error) {
-      alert('Error adding shop: ' + error.message);
+      alert('Error adding shop:');
     }
   };
-
+  
   // Input change handlers...
 
   return (
