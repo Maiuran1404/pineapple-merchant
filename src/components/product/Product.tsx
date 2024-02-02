@@ -5,8 +5,8 @@ import { useState } from "react";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
 import { currency } from "~/constants/misc";
 import type { ItemProps } from "~/constants/orders";
-import useProducts from "~/hooks/useProducts";
-import EditProductModal from "./EditProductModal";
+// import useProducts from "~/hooks/useProducts";
+// import EditProductModal from "./EditProductModal";
 
 const variants = {
   exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } },
