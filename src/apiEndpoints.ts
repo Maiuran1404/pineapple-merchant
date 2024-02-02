@@ -124,7 +124,7 @@ export async function getStore(user: UserInfo | null) {
     const clerk = await getDoc(clerkRef);
     if (clerk.exists()) {
       const clerkData = clerk.data();
-      const storeRef = doc(database, "shops", clerkData.storeID);
+      const storeRef = doc(database, "shops");
 
       const store = await getDoc(storeRef);
       if (store.exists()) {
