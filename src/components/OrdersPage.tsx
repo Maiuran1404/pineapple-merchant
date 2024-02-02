@@ -45,7 +45,7 @@ function OrdersPage() {
             </div>
           </div>
           <div className="w-1/3"> {/* Adjusted for one-third */}
-            <h2 className="mb-4 text-lg font-semibold">Complete</h2>
+            <h2 className="mb-4 text-lg font-semibold">Ready</h2>
             <div className="flex flex-col"> {/* Ensure single column layout */}
               {ordersComplete.length > 0 ? ordersComplete.map((order) => (
                 <Order key={order.id} order={order} />
