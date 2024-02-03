@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { BiMenu } from "react-icons/bi";
-import useStoreStatus from "~/hooks/useStoreStatus";
+// import useStoreStatus from "~/hooks/useStoreStatus";
 import pineapple from "~/images/pineapple.png";
 import Banner from "./Banner";
 
@@ -16,7 +16,7 @@ const navigation = [
 ];
 
 export default function Header() {
-  const { closed, toggleOpen } = useStoreStatus();
+  // const { closed, toggleOpen } = useStoreStatus();
   const router = useRouter();
   const pathname = router?.pathname;
 
@@ -24,16 +24,16 @@ export default function Header() {
     ({ href }) => href === String(pathname),
   )?.name;
 
-  function handleToggleOpenStore() {
-    const confirm = window.confirm(
-      closed
-        ? "Are you sure want to open the store? Customers will be able to place orders"
-        : "Are you sure you want to close the store? This will prevent customers from placing orders.",
-    );
-    if (confirm) {
-      toggleOpen();
-    }
-  }
+  // function handleToggleOpenStore() {
+  //   const confirm = window.confirm(
+  //     closed
+  //       ? "Are you sure want to open the store? Customers will be able to place orders"
+  //       : "Are you sure you want to close the store? This will prevent customers from placing orders.",
+  //   );
+  //   if (confirm) {
+  //     toggleOpen();
+  //   }
+  // }
 
   // Don't show header on signing page
   if (pathname === "/signin") return null;
@@ -79,7 +79,7 @@ export default function Header() {
             </button>
           </div>
 
-          <div className="hidden lg:flex lg:flex-1 lg:justify-end">
+          {/* <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <div className="flex items-center gap-6">
               <Switch.Group as="div" className="flex items-center">
                 <Switch.Label as="span" className="mr-3 text-sm">
@@ -103,12 +103,13 @@ export default function Header() {
                 </Switch>
               </Switch.Group>
 
-              <UserButton />
+              
             </div>
-          </div>
+          </div> */}
+          <UserButton />
         </nav>
       </header>
-      {closed && <Banner />}
+      {/* {closed && <Banner />} */}
     </>
   );
 }
