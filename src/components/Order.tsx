@@ -22,11 +22,13 @@ function Order({ order }: OrderProps) {
   const [orderStatus, setOrderStatus] = useState<string>(order.status);
 
   const handleStatusChange = async (newStatus: string) => {
-    const success = await updateOrderStatus(order.id, newStatus);
-    if (success) {
-      setOrderStatus(newStatus);
-    } else {
-      // Handle the error case (e.g., show a message to the user)
+    try {
+      await updateOrderStatus(order.id, newStatus);
+      setOrderStatus(newStatus); // Assuming this updates your local app state
+    } catch (error) {
+      console.error("Failed to update order status:", error);
+      // Implement additional error handling as needed
+      // For example, displaying an error message to the user
     }
   };
 
@@ -37,6 +39,12 @@ function Order({ order }: OrderProps) {
           .join(", ")
       : "";
   };
+
+  // return (
+  //   <div className={clsx("relative flex w-full max-w-[26rem] flex-col rounded-xl bg-white text-gray-700 shadow-lg", statusToColor[orderStatus])}>
+  //     {/* UI components here, no changes needed based on the description provided */}
+  //   </div>
+  // );
 
   return (
     <div className="relative flex w-full max-w-[26rem] flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-lg">
@@ -163,7 +171,12 @@ function Order({ order }: OrderProps) {
       <div className="p-6 pt-3">
         {orderStatus === "ORDER_PLACED" ? (
           <button
-            onClick={() => handleStatusChange("READY")}
+            onClick={() => {
+              // Call the async function within a synchronous handler
+              handleStatusChange("READY").catch((error) =>
+                console.error("Error updating status:", error),
+              );
+            }}
             className="block w-full select-none rounded-lg bg-gray-900 px-7 py-3.5 text-center align-middle font-sans text-sm font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
           >
             Klar nå
@@ -171,7 +184,12 @@ function Order({ order }: OrderProps) {
         ) : (
           orderStatus === "READY" && (
             <button
-              onClick={() => handleStatusChange("PICKED_UP")}
+              onClick={() => {
+                // Call the async function within a synchronous handler
+                handleStatusChange("PICKED_UP").catch((error) =>
+                  console.error("Error updating status:", error),
+                );
+              }}
               className="block w-full select-none rounded-lg bg-gray-900 px-7 py-3.5 text-center align-middle font-sans text-sm font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
             >
               Plukket opp

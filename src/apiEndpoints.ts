@@ -22,7 +22,7 @@ import { Shop, TOrder } from "./types";
 // Define the interface for the FormData that this endpoint will accept
 interface FormData {
   userId: string;
-  items: Array<{ productId: string; quantity: number; }>;
+  items: Array<{ productId: string; quantity: number }>;
   total: number;
   createdAt: Date | string;
 }
@@ -137,7 +137,6 @@ export async function getStore(user: UserInfo | null) {
     return null; // Handle the error as needed
   }
 }
-
 
 export async function addStoreItem(shopID: string, item: ItemProps) {
   try {
@@ -308,7 +307,10 @@ export async function getTransactionProducts(transactionID: string) {
   }
 }
 
-export function subscribeToOrdersRealTime(shopId: string, callback: (orders: TOrder[] | null, error?: FirestoreError) => void) {
+export function subscribeToOrdersRealTime(
+  shopId: string,
+  callback: (orders: TOrder[] | null, error?: FirestoreError) => void,
+) {
   const ordersRef = collection(database, "orders");
 
   // Apply a where clause to filter orders by shopId
@@ -317,11 +319,11 @@ export function subscribeToOrdersRealTime(shopId: string, callback: (orders: TOr
   return onSnapshot(
     filteredOrdersRef,
     (snapshot) => {
-      const orders: TOrder[] = snapshot.docs.map(doc => ({
+      const orders: TOrder[] = snapshot.docs.map((doc) => ({
         id: doc.id,
-        ...doc.data() as Omit<TOrder, 'id'>, // Cast the data to match the Order type, excluding 'id' which is added separately
+        ...(doc.data() as Omit<TOrder, "id">), // Cast the data to match the Order type, excluding 'id' which is added separately
       }));
-      
+
       // Check if there are orders before calling the callback
       if (orders.length > 0) {
         callback(orders);
@@ -333,39 +335,58 @@ export function subscribeToOrdersRealTime(shopId: string, callback: (orders: TOr
     (error) => {
       console.error("Error listening to orders updates:", error);
       callback(null, error); // Call callback with null and error
-    }
+    },
   );
 }
 
-export async function updateOrderStatus(orderId: string, newStatus: string) {
+export async function updateOrderStatus(
+  orderId: string,
+  newStatus: string,
+): Promise<void> {
   const orderRef = doc(database, "orders", orderId);
 
   try {
-    await updateDoc(orderRef, { 
-      status: newStatus
+    await updateDoc(orderRef, {
+      status: newStatus,
     });
     console.log(`Order ${orderId} status updated to ${newStatus}`);
-    return true;
   } catch (error) {
     console.error("Error updating order status: ", error);
-    return false;
+    throw new Error(
+      `Failed to update order status: ${
+        error instanceof Error ? error.message : String(error)
+      }`,
+    );
   }
 }
 
-export async function addFormDataToFirestore(formData: Shop): Promise<{ success: boolean; message: string; }> {
+export async function addFormDataToFirestore(
+  formData: Shop,
+): Promise<{ success: boolean; message: string }> {
   try {
     // Adjust the path to your Firestore database as needed
     const collectionRef = collection(database, "shops");
     const docRef = await addDoc(collectionRef, formData); // Directly use formData here
 
     console.log("FormData added to Firestore with ID:", docRef.id);
-    return { success: true, message: `FormData added successfully with ID: ${docRef.id}` };
+    return {
+      success: true,
+      message: `FormData added successfully with ID: ${docRef.id}`,
+    };
   } catch (error) {
     console.error("Error adding FormData to Firestore:", error);
 
     // Convert error to string
-    const errorMessage = typeof error === 'string' ? error : error instanceof Error ? error.message : String(error);
+    const errorMessage =
+      typeof error === "string"
+        ? error
+        : error instanceof Error
+        ? error.message
+        : String(error);
 
-    return { success: false, message: `Error adding FormData to Firestore: ${errorMessage}` };
+    return {
+      success: false,
+      message: `Error adding FormData to Firestore: ${errorMessage}`,
+    };
   }
 }
