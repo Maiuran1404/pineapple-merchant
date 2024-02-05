@@ -104,7 +104,7 @@ const Store = () => {
 
   return (
     <h1> 
-      Store test
+      Store testing
     </h1>
     // <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
     //   {/* <input type="text" name="name" value={shop.name} onChange={handleInputChange} placeholder="Shop Name" />
