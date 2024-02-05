@@ -390,3 +390,64 @@ export async function addFormDataToFirestore(
     };
   }
 }
+
+interface ShopUpdate {
+  name?: string;
+  description?: string;
+  location?: string;
+  // Add other shop properties here
+}
+
+// Function to update shop information in Firestore
+export async function updateShopInfoInFirestore(
+  shopId: string,
+  updatedData: ShopUpdate,
+): Promise<{ success: boolean; message: string }> {
+  const shopRef = doc(database, "shops", shopId);
+  
+  try {
+    await updateDoc(shopRef, updatedData);
+    console.log("Shop information updated successfully");
+    return { success: true, message: "Shop information updated successfully" };
+  } catch (error) {
+    console.error("Error updating shop information:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return { success: false, message: `Error updating shop information: ${errorMessage}` };
+  }
+}
+
+export async function fetchShopData(shopId: string) {
+  const shopRef = doc(database, "shops", shopId);
+  try {
+    const docSnap = await getDoc(shopRef);
+    if (docSnap.exists()) {
+      return { success: true, data: docSnap.data() };
+    } else {
+      console.error("No such document!");
+      return { success: false, message: "No such document!" };
+    }
+  } catch (error) {
+    console.error("Error fetching shop data:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return { success: false, message: `Error fetching shop data: ${errorMessage}` };
+  }
+}
+
+// Adjust this function to handle both creation and updating of a shop document
+export async function saveShopInfoInFirestore(
+  shopId: string,
+  shopData: ShopUpdate,
+): Promise<{ success: boolean; message: string }> {
+  const shopRef = doc(database, "shops", shopId);
+  
+  try {
+    await setDoc(shopRef, shopData, { merge: true }); // This will create the document if it doesn't exist or update it if it does
+    const action = shopData.hasOwnProperty('id') ? "updated" : "created";
+    console.log(`Shop information ${action} successfully`);
+    return { success: true, message: `Shop information ${action} successfully` };
+  } catch (error) {
+    console.error("Error saving shop information:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    return { success: false, message: `Error saving shop information: ${errorMessage}` };
+  }
+}
