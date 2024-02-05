@@ -98,7 +98,7 @@ const Store = () => {
         throw new Error(response.message);
       }
     } catch (error) {
-      alert(`Error adding shop: ${error.message}`);
+      alert(`Error adding shop`);
     }
   };
 
