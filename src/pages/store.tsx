@@ -50,25 +50,42 @@ const Store = () => {
   };
   
 
-  const handleOptionTypeChange = (e: React.ChangeEvent<HTMLInputElement>, optionTypeIndex: number, optionIndex: number) => {
+  const handleOptionTypeChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    optionTypeIndex: number,
+    optionIndex: number
+  ) => {
     const { name, value } = e.target;
     const newOptionTypes = [...shop.menu.optionTypes];
-    const optionType = newOptionTypes[optionTypeIndex];
-    if (name === "optionTypeName") {
-      optionType.name = value;
-    } else if (name.startsWith("options")) {
-      const option = optionType.options[optionIndex];
-      const fieldName = name.split(".")[1]; // e.g., "options.description"
-      option[fieldName] = fieldName === "price" ? parseFloat(value) : value;
+  
+    // Check if optionType exists
+    if (optionTypeIndex >= 0 && optionTypeIndex < newOptionTypes.length) {
+      const optionType = newOptionTypes[optionTypeIndex];
+  
+      if (name === "optionTypeName") {
+        optionType.name = value;
+      } else if (name.startsWith("options")) {
+        // Ensure option exists within the optionType
+        if (optionIndex >= 0 && optionIndex < optionType.options.length) {
+          const option = optionType.options[optionIndex];
+          const fieldName = name.split(".")[1]; // e.g., "options.description"
+          
+          // Safely assign the value with appropriate type casting
+          option[fieldName] = fieldName === "price" ? parseFloat(value) : value;
+        }
+      }
+  
+      // Proceed to update the shop state
+      setShop((prevShop) => ({
+        ...prevShop,
+        menu: {
+          ...prevShop.menu,
+          optionTypes: newOptionTypes,
+        },
+      }));
     }
-    setShop((prevShop) => ({
-      ...prevShop,
-      menu: {
-        ...prevShop.menu,
-        optionTypes: newOptionTypes,
-      },
-    }));
   };
+  
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
