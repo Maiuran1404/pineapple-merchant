@@ -50,41 +50,41 @@ const Store = () => {
   };
   
 
-  const handleOptionTypeChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    optionTypeIndex: number,
-    optionIndex: number
-  ) => {
-    const { name, value } = e.target;
-    const newOptionTypes = [...shop.menu.optionTypes];
+  // const handleOptionTypeChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   optionTypeIndex: number,
+  //   optionIndex: number
+  // ) => {
+  //   const { name, value } = e.target;
+  //   const newOptionTypes = [...shop.menu.optionTypes];
   
-    // Check if optionType exists
-    if (optionTypeIndex >= 0 && optionTypeIndex < newOptionTypes.length) {
-      const optionType = newOptionTypes[optionTypeIndex];
+  //   // Check if optionType exists
+  //   if (optionTypeIndex >= 0 && optionTypeIndex < newOptionTypes.length) {
+  //     const optionType = newOptionTypes[optionTypeIndex];
   
-      if (name === "optionTypeName") {
-        optionType.name = value;
-      } else if (name.startsWith("options")) {
-        // Ensure option exists within the optionType
-        if (optionIndex >= 0 && optionIndex < optionType.options.length) {
-          const option = optionType.options[optionIndex];
-          const fieldName = name.split(".")[1]; // e.g., "options.description"
+  //     if (name === "optionTypeName") {
+  //       optionType.name = value;
+  //     } else if (name.startsWith("options")) {
+  //       // Ensure option exists within the optionType
+  //       if (optionIndex >= 0 && optionIndex < optionType.options.length) {
+  //         const option = optionType.options[optionIndex];
+  //         const fieldName = name.split(".")[1]; // e.g., "options.description"
           
-          // Safely assign the value with appropriate type casting
-          option[fieldName] = fieldName === "price" ? parseFloat(value) : value;
-        }
-      }
+  //         // Safely assign the value with appropriate type casting
+  //         option[fieldName] = fieldName === "price" ? parseFloat(value) : value;
+  //       }
+  //     }
   
-      // Proceed to update the shop state
-      setShop((prevShop) => ({
-        ...prevShop,
-        menu: {
-          ...prevShop.menu,
-          optionTypes: newOptionTypes,
-        },
-      }));
-    }
-  };
+  //     // Proceed to update the shop state
+  //     setShop((prevShop) => ({
+  //       ...prevShop,
+  //       menu: {
+  //         ...prevShop.menu,
+  //         optionTypes: newOptionTypes,
+  //       },
+  //     }));
+  //   }
+  // };
   
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -116,14 +116,14 @@ const Store = () => {
       <input type="text" name="menu.name" value={shop.menu.name} onChange={handleInputChange} placeholder="Menu Name" />
       <textarea name="menu.description" value={shop.menu.description} onChange={handleInputChange} placeholder="Menu Description" />
 
-      {/* Simplified handling for one optionType and one option. For multiple, you'd dynamically generate these fields. */}
+      {/* Simplified handling for one optionType and one option. For multiple, you'd dynamically generate these fields.
       <input type="text" name="optionTypeName" value={shop.menu.optionTypes[0].name} onChange={(e) => handleOptionTypeChange(e, 0, 0)} placeholder="Option Type Name" />
       <input type="text" name="options.name" value={shop.menu.optionTypes[0].options[0].name} onChange={(e) => handleOptionTypeChange(e, 0, 0)} placeholder="Option Name" />
       <textarea name="options.description" value={shop.menu.optionTypes[0].options[0].description} onChange={(e) => handleOptionTypeChange(e, 0, 0)} placeholder="Option Description" />
       <input type="number" name="options.price" value={shop.menu.optionTypes[0].options[0].price} onChange={(e) => handleOptionTypeChange(e, 0, 0)} placeholder="Option Price" />
 
       <input type="text" name="openingHours.monday.open" value={shop.openingHours.monday.open} onChange={handleInputChange} placeholder="Monday Opening Time" />
-      <input type="text" name="openingHours.monday.close" value={shop.openingHours.monday.close} onChange={handleInputChange} placeholder="Monday Closing Time" />
+      <input type="text" name="openingHours.monday.close" value={shop.openingHours.monday.close} onChange={handleInputChange} placeholder="Monday Closing Time" /> */}
 
       <input type="text" name="stripeConnectedId" value={shop.stripeConnectedId} onChange={handleInputChange} placeholder="Stripe Connected ID" />
 
