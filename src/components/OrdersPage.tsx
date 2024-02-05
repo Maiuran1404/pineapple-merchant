@@ -5,39 +5,54 @@ import Order from "~/components/Order";
 import Empty from "./Empty";
 import { TOrder } from "~/types";
 import { FirestoreError } from "firebase/firestore";
+import { useUser } from '@clerk/clerk-react';
 
 function OrdersPage() {
   // Adding TypeScript interface for order prop
   const [orders, setOrders] = useState<TOrder[]>([]);
   const [loading, setLoading] = useState(true);
+  const { user } = useUser();
 
   useEffect(() => {
-    const handleOrdersUpdate = (
-      orders: TOrder[] | null,
-      error?: FirestoreError,
-    ) => {
-      if (error) {
-        console.error("Error fetching orders:", error);
-        return;
-      }
-      if (orders) {
-        setOrders(orders);
-      } else {
-        // Handle the case when orders are null (e.g., no orders found or an error occurred)
-        console.log("No orders found or an error occurred");
-        setOrders([]); // You might want to clear the orders or handle this scenario differently
-      }
+    // Only proceed if the shopId is defined
+    const shopIdFromMetadata = user?.publicMetadata?.shopId as string | undefined;
+    
+    if (typeof shopIdFromMetadata === 'string') {
+      const handleOrdersUpdate = (
+        orders: TOrder[] | null,
+        error?: FirestoreError,
+      ) => {
+        if (error) {
+          console.error("Error fetching orders:", error);
+          return;
+        }
+        if (orders) {
+          setOrders(orders);
+        } else {
+          console.log("No orders found or an error occurred");
+          setOrders([]);
+        }
+        setLoading(false);
+      };
+  
+      const unsubscribe = subscribeToOrdersRealTime(
+        shopIdFromMetadata,
+        handleOrdersUpdate,
+      );
+  
+      return () => unsubscribe();
+    } else {
+      // Handle the case when shopId is not available yet
+      console.warn("Shop ID is not available. Ensure the user is logged in and has a shopId set.");
       setLoading(false);
-    };
-    const unsubscribe = subscribeToOrdersRealTime(
-      "yhTqXHvykMTjepPZOxPs",
-      handleOrdersUpdate,
-    );
-
-    return () => unsubscribe();
-  }, []);
+    }
+  }, [user]);
+  
 
   if (loading) return <div>Loading...</div>;
+
+  console.log("Users", user);
+  console.log("Users shopid", user?.publicMetadata.shopId);
 
   // Filter orders by status
   const ordersPlaced = orders.filter(
@@ -55,6 +70,7 @@ function OrdersPage() {
               {" "}
               {/* Adjusted for two-thirds and grid layout */}
               <h2 className="mb-4 text-lg font-semibold">Order Placed</h2>
+              
               <div className="grid grid-cols-1 gap-4">
                 {" "}
                 {/* Grid layout for two items horizontally */}
