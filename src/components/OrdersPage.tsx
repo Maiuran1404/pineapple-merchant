@@ -49,7 +49,7 @@ function OrdersPage() {
   }, [user]);
   
 
-  if (loading) return <div>Loading..</div>;
+  if (loading) return <div>Loading...</div>;
 
   console.log("Users", user);
   console.log("Users shopid", user?.publicMetadata.shopId);
