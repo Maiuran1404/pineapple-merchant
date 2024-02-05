@@ -27,20 +27,28 @@ const Store = () => {
     const { name, value } = e.target;
     if (name.includes(".")) {
       const keys = name.split(".");
-      setShop((prevShop) => ({
-        ...prevShop,
-        [keys[0]]: {
-          ...prevShop[keys[0]],
-          [keys[1]]: value,
-        },
-      }));
+      // Ensure TypeScript knows these are strings.
+      const key1 = keys[0] as string;
+      const key2 = keys[1] as string;
+  
+      setShop((prevShop: any) => {
+        // Use a more specific type instead of 'any' if your shop structure is known.
+        return {
+          ...prevShop,
+          [key1]: {
+            ...prevShop[key1],
+            [key2]: value,
+          },
+        };
+      });
     } else {
-      setShop((prevShop) => ({
+      setShop((prevShop: any) => ({
         ...prevShop,
         [name]: value,
       }));
     }
   };
+  
 
   const handleOptionTypeChange = (e: React.ChangeEvent<HTMLInputElement>, optionTypeIndex: number, optionIndex: number) => {
     const { name, value } = e.target;
