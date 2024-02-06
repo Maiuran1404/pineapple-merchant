@@ -391,9 +391,7 @@ export async function addFormDataToFirestore(
   }
 }
 
-type ShopUpdate = {
-  [key: string]: any;
-};
+type ShopUpdate = Record<string, Shop>;
 
 // Function to update shop information in Firestore
 export async function updateShopInfoInFirestore(
