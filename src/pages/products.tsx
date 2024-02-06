@@ -38,7 +38,7 @@ const Products: React.FC = () => {
       }
     };
 
-    getMenuData();
+    void getMenuData();
   }, [shopId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
