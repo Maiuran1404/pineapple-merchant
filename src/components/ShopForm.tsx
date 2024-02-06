@@ -22,14 +22,18 @@ const ShopForm: FC<ShopFormProps> = ({ shopId }) => {
       if (!shopId) return; // Early return if no shopId
       setLoading(true);
       const response = await fetchShopData(shopId);
-      if (response.success) {
+      if (response.success && response.data) { // Check if response.data is not undefined
         setShopData(response.data);
+      } else {
+        // If response.data is undefined, you can set a default state or handle the case as needed
+        setShopData({ name: '', description: '', location: '' }); // Set default or initial state
       }
       setLoading(false);
     };
-
+  
     loadShopData();
   }, [shopId]);
+  
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
