@@ -1,5 +1,6 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { fetchShopData, saveShopInfoInFirestore } from '~/apiEndpoints';
+import { Shop } from '~/types';
 
 interface ShopData {
   name: string;
@@ -13,17 +14,29 @@ interface ShopFormProps {
 }
 
 const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
-  const [shopData, setShopData] = useState<ShopData>({ name: '', description: '', location: '' });
+  const initialShopData: Shop = {
+    name: '',
+    address: '',
+    description: '',
+    contactInfo: { email: '', phone: '' },
+    image: null,
+    location: '',
+    menu: { description: '', name: '', optionTypes: [] },
+    openingHours: {},
+    stripeConnectedId: '',
+  };
+
+  const [shopData, setShopData] = useState<Shop>(initialShopData);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     async function loadShopData() {
       if (!shopId) return;
+      setLoading(true);
       try {
-        setLoading(true);
         const response = await fetchShopData(shopId);
         if (response.success && response.data) {
-          setShopData(response.data as ShopData);
+          setShopData(response.data as Shop);
         } else {
           console.error('Failed to fetch shop data');
         }

@@ -39,6 +39,7 @@ type OpeningHours = Record<string, {
 export interface Shop {
     address: string;
     contactInfo: ContactInfo;
+    description: string;
     image: File | null; // Assuming image is a File object. Use 'any' if the type varies.
     location: string;
     menu: Menu;

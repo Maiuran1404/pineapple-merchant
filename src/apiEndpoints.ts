@@ -432,7 +432,7 @@ export async function fetchShopData(shopId: string) {
 // Adjust this function to handle both creation and updating of a shop document
 export async function saveShopInfoInFirestore(
   shopId: string,
-  shopData: ShopUpdate,
+  shopData: Shop,
 ): Promise<{ success: boolean; message: string }> {
   const shopRef = doc(database, "shops", shopId);
   
