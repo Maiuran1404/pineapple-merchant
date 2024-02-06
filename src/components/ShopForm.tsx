@@ -9,25 +9,24 @@ interface ShopFormProps {
 
 const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
   const initialShopData: Shop = {
-    name: '',
-    address: '',
-    category: '',
-    description: '',
-    contactInfo: { email: '', phone: '' },
-    image: '',
-    location: '',
-    menu: { description: '', name: '', optionTypes: [] },
+    name: null,
+    address: null,
+    category: null,
+    description: null,
+    contactInfo: { email: null, phone: null },
+    image: null,
+    location: null,
+    menu: { description: null, name: null, optionTypes: [] },
     openingHours: {
-        monday: { open: '', close: '' },
-        tuesday: { open: '', close: '' },
-        wednesday: { open: '', close: '' },
-        thursday: { open: '', close: '' },
-        friday: { open: '', close: '' },
-        saturday: { open: '', close: '' },
-        sunday: { open: '', close: '' },
+        monday: { open: null, close: null },
+        tuesday: { open: null, close: null },
+        wednesday: { open: null, close: null },
+        thursday: { open: null, close: null },
+        friday: { open: null, close: null },
+        saturday: { open: null, close: null },
+        sunday: { open: null, close: null },
     },
 };
-
   const [shopData, setShopData] = useState<Shop>(initialShopData);
   const [loading, setLoading] = useState<boolean>(false);
 

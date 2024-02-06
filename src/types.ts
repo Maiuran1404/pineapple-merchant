@@ -10,30 +10,30 @@ export type TOrder = {
 }
 
 interface ContactInfo {
-    email: string;
-    phone: string;
+    email: string | null;
+    phone: string | null;
 }
   
 interface Option {
-    description: string;
-    name: string;
-    price: number;
+    description: string | null;
+    name: string | null;
+    price: number | null;
 }
   
 interface OptionType {
-    name: string;
+    name: string | null;
     options: Option[];
 }
   
 interface Menu {
-    description: string;
-    name: string;
+    description: string | null;
+    name: string | null;
     optionTypes: OptionType[];
 }
 
 interface Day {
-    open: string;
-    close: string;
+    open: string | null;
+    close: string | null;
 };
   
 
@@ -49,14 +49,14 @@ type OpeningHours = {
 
 
 export interface Shop {
-    address: string;
-    category: string;
+    address: string | null;
+    category: string | null;
     contactInfo: ContactInfo;
-    description: string;
-    image: string;
-    location: string;
+    description: string | null;
+    image: string | null;
+    location: string | null;
     menu: Menu;
-    name: string;
+    name: string | null;
     openingHours: OpeningHours;
 }
   
