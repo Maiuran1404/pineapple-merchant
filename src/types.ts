@@ -30,21 +30,33 @@ interface Menu {
     name: string;
     optionTypes: OptionType[];
 }
+
+interface Day {
+    open: string;
+    close: string;
+};
   
-type OpeningHours = Record<string, {
-      open: string;
-      close: string;
-}>;
-  
+
+type OpeningHours = {
+    monday: Day;
+    tuesday: Day;
+    wednesday: Day;
+    thursday: Day;
+    friday: Day;
+    saturday: Day;
+    sunday: Day;
+};
+
+
 export interface Shop {
     address: string;
+    category: string;
     contactInfo: ContactInfo;
     description: string;
-    image: File | null; // Assuming image is a File object. Use 'any' if the type varies.
+    image: string;
     location: string;
     menu: Menu;
     name: string;
     openingHours: OpeningHours;
-    stripeConnectedId: string;
 }
   

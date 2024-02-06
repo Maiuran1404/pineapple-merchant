@@ -2,12 +2,6 @@ import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { fetchShopData, saveShopInfoInFirestore } from '~/apiEndpoints';
 import { Shop } from '~/types';
 
-interface ShopData {
-  name: string;
-  description: string;
-  location: string;
-  // Define other fields as needed
-}
 
 interface ShopFormProps {
   shopId?: string; // ShopId can be optional
@@ -17,14 +11,22 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
   const initialShopData: Shop = {
     name: '',
     address: '',
+    category: '',
     description: '',
     contactInfo: { email: '', phone: '' },
-    image: null,
+    image: '',
     location: '',
     menu: { description: '', name: '', optionTypes: [] },
-    openingHours: {},
-    stripeConnectedId: '',
-  };
+    openingHours: {
+        monday: { open: '', close: '' },
+        tuesday: { open: '', close: '' },
+        wednesday: { open: '', close: '' },
+        thursday: { open: '', close: '' },
+        friday: { open: '', close: '' },
+        saturday: { open: '', close: '' },
+        sunday: { open: '', close: '' },
+    },
+};
 
   const [shopData, setShopData] = useState<Shop>(initialShopData);
   const [loading, setLoading] = useState<boolean>(false);
