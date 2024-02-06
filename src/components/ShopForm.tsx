@@ -54,16 +54,30 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    if (name.includes('.')) { // For nested objects like contactInfo and openingHours
-      const keys = name.split('.'); // e.g., ["contactInfo", "email"]
+  
+    // Check if the name includes '.' indicating a nested object like 'contactInfo.email'
+    if (name.includes('.')) {
+      const [firstKey, secondKey] = name.split('.') as [keyof Shop, keyof Shop['contactInfo']];
+      
+      // Safely updating nested 'contactInfo' properties
+      if (firstKey === 'contactInfo' && (secondKey === 'email' || secondKey === 'phone')) {
+        setShopData(prevData => ({
+          ...prevData,
+          [firstKey]: {
+            ...prevData[firstKey],
+            [secondKey]: value,
+          },
+        }));
+      }
+    } else {
+      // Directly updating shallow properties
       setShopData(prevData => ({
         ...prevData,
-        [keys[0]]: { ...prevData[keys[0]], [keys[1]]: value }
+        [name]: value,
       }));
-    } else {
-      setShopData(prevData => ({ ...prevData, [name]: value }));
     }
   };
+  
 
   const handleOpeningHoursChange = (day: keyof Shop['openingHours'], key: 'open' | 'close', value: string) => {
     setShopData(prevData => ({
