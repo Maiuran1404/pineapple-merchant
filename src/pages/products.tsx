@@ -255,19 +255,7 @@ const Products: React.FC = () => {
         Add Option Category
       </button>
       <br />
-      <button onClick={() => addItemToMenu()}>Add Item to Menu</button>
-
-      <h2>Menu:</h2>
-      {/* <ul>
-        {menu.map((item, index) => (
-          <li key={index}>
-            <p>Name: {item.name}</p>
-            <p>Price: {item.price}</p>
-            <p>Description: {item.description}</p>
-            <img src={item.imageUrl} alt={item.name} />
-          </li>
-        ))}
-      </ul> */}
+      <button onClick={() => void addItemToMenu()}>Add Item to Menu</button>
     </div>
   );
 };
