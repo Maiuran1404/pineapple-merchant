@@ -79,7 +79,7 @@ function Order({ order }: OrderProps) {
               <div className="flex justify-between">
                 <div>
                   <h4 className="text-lg font-semibold">{product.name}</h4>
-                  <p className="text-sm text-gray-900">
+                  <p className="text-lg text-gray-900">
                     {formatProductOptions(product.options)}
                   </p>
                 </div>
