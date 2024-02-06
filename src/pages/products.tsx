@@ -26,7 +26,7 @@ interface Item {
 
 const Products: React.FC = () => {
   const {user} = useUser();
-  const shopId = user?.publicMetadata?.shopId ?? undefined;
+  const shopId = typeof user?.publicMetadata?.shopId === 'string' ? user.publicMetadata.shopId : undefined;
   const [newItem, setNewItem] = useState<Item>({
     name: '',
     price: '',
@@ -36,18 +36,19 @@ const Products: React.FC = () => {
   });
   const [menu, setMenu] = useState<Item[]>([]);
 
-   // Fetch shop data on component mount
-   useEffect(() => {
+  useEffect(() => {
     const getMenuData = async () => {
-      if (shopId) { // Only proceed if shopId is not undefined
+      if (shopId) {
         const result = await fetchShopData(shopId);
-        if (result.success && result.data.menu) {
-          setMenu(result.data.menu);
+        // Using optional chaining to simplify and improve readability
+        if (result.success && result.data?.menu) {
+          // Explicitly cast result.data.menu to Item[]
+          const menuData: Item[] = result.data.menu as Item[];
+          setMenu(menuData);
         } else {
-          console.error(result.message);
+          console.error(result.message ?? 'Failed to fetch shop data');
         }
       } else {
-        // Handle scenario when shopId is undefined, e.g., show error or placeholder
         console.error('shopId is undefined, unable to fetch shop data');
       }
     };
