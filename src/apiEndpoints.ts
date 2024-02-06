@@ -429,12 +429,10 @@ export async function fetchShopData(shopId: string) {
   }
 }
 
-type ShopData = MenuItem[] | Shop; 
-
 // Adjust this function to handle both creation and updating of a shop document
 export async function saveShopInfoInFirestore(
   shopId: string,
-  shopData: ShopData,
+  shopData: Partial<Shop> | MenuItem[],
 ): Promise<{ success: boolean; message: string }> {
   const shopRef = doc(database, "shops", shopId);
   

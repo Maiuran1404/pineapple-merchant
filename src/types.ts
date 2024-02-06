@@ -76,7 +76,7 @@ export interface Shop {
     description: string | null;
     image: string | null;
     location: string | null;
-    menu: Menu;
+    menu: MenuItem[];
     name: string | null;
     openingHours: OpeningHours;
 }
