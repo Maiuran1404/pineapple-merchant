@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, FC } from 'react'; // Import FC for Function Component typing
 import { fetchShopData, saveShopInfoInFirestore }  from "~/apiEndpoints";
 
 interface ShopData {
@@ -9,40 +9,40 @@ interface ShopData {
 }
 
 interface ShopFormProps {
-  shopId?: string;
+  shopId?: string; // Make shopId optional
 }
 
-
-const ShopForm = ({ shopId }) => {
+// Use FC (Function Component) generic type to type props
+const ShopForm: FC<ShopFormProps> = ({ shopId }) => {
   const [shopData, setShopData] = useState<ShopData>({ name: '', description: '', location: '' });
-  // Rest of your component
-  const [loading, setLoading] = useState(false); // Start with loading false, since we always show the form now
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const loadShopData = async () => {
-      setLoading(true); // Begin loading
+      if (!shopId) return; // Early return if no shopId
+      setLoading(true);
       const response = await fetchShopData(shopId);
       if (response.success) {
         setShopData(response.data);
-      } // No else case needed; we always show the form
-      setLoading(false); // End loading
+      }
+      setLoading(false);
     };
 
-    if (shopId) loadShopData(); // Only load data if shopId is provided
+    loadShopData();
   }, [shopId]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setShopData((prevData) => ({
+    setShopData(prevData => ({
       ...prevData,
       [name]: value,
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Use saveShopInfoInFirestore, which can handle both update and create
-    const response = await saveShopInfoInFirestore(shopId || Date.now().toString(), shopData);
+    const uniqueId = shopId || `shop_${Date.now()}`;
+    const response = await saveShopInfoInFirestore(uniqueId, shopData);
     alert(response.message);
   };
 
