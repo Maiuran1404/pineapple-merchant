@@ -47,6 +47,27 @@ type OpeningHours = {
     sunday: Day;
 };
 
+type MenuOption = {
+    id: string;
+    name: string;
+    description: string;
+    price: string;
+  }
+  
+interface OptionCategory {
+    name: string;
+    description: string;
+    options: MenuOption[];
+  }
+  
+export interface MenuItem {
+    name: string;
+    price: string;
+    description: string;
+    imageUrl: string;
+    optionCategories: OptionCategory[];
+  }
+
 
 export interface Shop {
     address: string | null;

@@ -2,27 +2,9 @@ import React, { useEffect, useState } from "react";
 import { doc, setDoc } from "firebase/firestore"; // Assuming you're using Firebase v9+
 import { fetchShopData, saveShopInfoInFirestore } from "~/apiEndpoints";
 import { useUser } from "@clerk/nextjs";
+import { MenuItem, MenuOption } from "~/types";
 
-interface Option {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-}
 
-interface OptionCategory {
-  name: string;
-  description: string;
-  options: Option[];
-}
-
-interface Item {
-  name: string;
-  price: string;
-  description: string;
-  imageUrl: string;
-  optionCategories: OptionCategory[];
-}
 
 const Products: React.FC = () => {
   const { user } = useUser();
@@ -30,14 +12,14 @@ const Products: React.FC = () => {
     typeof user?.publicMetadata?.shopId === "string"
       ? user.publicMetadata.shopId
       : undefined;
-  const [newItem, setNewItem] = useState<Item>({
+  const [newItem, setNewItem] = useState<MenuItem>({
     name: "",
     price: "",
     description: "",
     imageUrl: "",
     optionCategories: [],
   });
-  const [menu, setMenu] = useState<Item[]>([]);
+  const [menu, setMenu] = useState<MenuItem[]>([]);
 
   useEffect(() => {
     const getMenuData = async () => {
@@ -46,7 +28,7 @@ const Products: React.FC = () => {
         // Using optional chaining to simplify and improve readability
         if (result.success && result.data?.menu) {
           // Explicitly cast result.data.menu to Item[]
-          const menuData: Item[] = result.data.menu as Item[];
+          const menuData: MenuItem[] = result.data.menu as MenuItem[];
           setMenu(menuData);
         } else {
           console.error(result.message ?? "Failed to fetch shop data");
@@ -107,7 +89,7 @@ const Products: React.FC = () => {
   };
 
   const addOptionToCategory = (categoryIndex: number) => {
-    const newOption: Option = {
+    const newOption: MenuOption = {
       id: "", // Ideally, generate a unique ID here
       name: "",
       description: "",

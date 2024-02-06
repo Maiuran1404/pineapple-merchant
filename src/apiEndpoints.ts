@@ -17,7 +17,7 @@ import {
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
 import { ItemProps, OrderProps } from "./constants/orders";
-import { Shop, TOrder } from "./types";
+import { MenuItem, Shop, TOrder } from "./types";
 
 // Define the interface for the FormData that this endpoint will accept
 interface FormData {
@@ -429,10 +429,12 @@ export async function fetchShopData(shopId: string) {
   }
 }
 
+type ShopData = MenuItem[] | Shop; 
+
 // Adjust this function to handle both creation and updating of a shop document
 export async function saveShopInfoInFirestore(
   shopId: string,
-  shopData: Shop,
+  shopData: ShopData,
 ): Promise<{ success: boolean; message: string }> {
   const shopRef = doc(database, "shops", shopId);
   
