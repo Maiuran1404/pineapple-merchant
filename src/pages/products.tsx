@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { doc, setDoc } from 'firebase/firestore'; // Assuming you're using Firebase v9+
-import { saveShopInfoInFirestore } from '~/apiEndpoints';
+import { fetchShopData, saveShopInfoInFirestore } from '~/apiEndpoints';
+import { useUser } from '@clerk/nextjs';
 
 interface Option {
   id: string;
@@ -24,7 +25,8 @@ interface Item {
 }
 
 const Products: React.FC = () => {
-  const shopId = 'data'; // Replace with your actual shop ID
+  const {user} = useUser();
+  const shopId = user?.publicMetadata?.shopId ?? undefined;
   const [newItem, setNewItem] = useState<Item>({
     name: '',
     price: '',
@@ -33,6 +35,25 @@ const Products: React.FC = () => {
     optionCategories: [],
   });
   const [menu, setMenu] = useState<Item[]>([]);
+
+   // Fetch shop data on component mount
+   useEffect(() => {
+    const getMenuData = async () => {
+      if (shopId) { // Only proceed if shopId is not undefined
+        const result = await fetchShopData(shopId);
+        if (result.success && result.data.menu) {
+          setMenu(result.data.menu);
+        } else {
+          console.error(result.message);
+        }
+      } else {
+        // Handle scenario when shopId is undefined, e.g., show error or placeholder
+        console.error('shopId is undefined, unable to fetch shop data');
+      }
+    };
+
+    getMenuData();
+  }, [shopId]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -111,6 +132,21 @@ const Products: React.FC = () => {
 
   return (
     <div>
+      <br/>
+      <br/>
+      <h2>Menu:</h2>
+      <ul>
+        {menu.map((item, index) => (
+          <li key={index}>
+            <p>Name: {item.name}</p>
+            <p>Price: {item.price}</p>
+            <p>Description: {item.description}</p>
+            {/* Optionally display option categories and their options here */}
+          </li>
+        ))}
+      </ul>
+      <br/>
+      <br/>
       <h1>Menu Page for Shop: {shopId}</h1>
       <div>
         <label>Name:</label>
