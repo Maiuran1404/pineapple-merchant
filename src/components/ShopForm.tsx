@@ -1,62 +1,77 @@
-import { useState, useEffect, FC } from 'react'; // Import FC for Function Component typing
-import { fetchShopData, saveShopInfoInFirestore }  from "~/apiEndpoints";
+import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { fetchShopData, saveShopInfoInFirestore } from '~/apiEndpoints';
 
+// Define TypeScript interfaces for better type checking and readability
 interface ShopData {
   name: string;
   description: string;
   location: string;
-  // Add other fields as necessary
+  // Define other fields as needed
 }
 
 interface ShopFormProps {
-  shopId?: string; // Make shopId optional
+  shopId?: string; // Assuming shopId can be optional
 }
 
-// Use FC (Function Component) generic type to type props
-const ShopForm: FC<ShopFormProps> = ({ shopId }) => {
+const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
   const [shopData, setShopData] = useState<ShopData>({ name: '', description: '', location: '' });
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
-    const loadShopData = async () => {
+    async function loadShopData() {
       if (!shopId) return; // Early return if no shopId
-      setLoading(true);
-      const response = await fetchShopData(shopId);
-      if (response.success && response.data) { // Check if response.data is not undefined
-        setShopData(response.data);
-      } else {
-        // If response.data is undefined, you can set a default state or handle the case as needed
-        setShopData({ name: '', description: '', location: '' }); // Set default or initial state
+      try {
+        setLoading(true);
+        const response = await fetchShopData(shopId);
+        if (response.success) {
+          setShopData(response.data);
+        }
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
-    };
-  
+    }
+
     loadShopData();
   }, [shopId]);
-  
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setShopData(prevData => ({
-      ...prevData,
-      [name]: value,
-    }));
+    setShopData(prevData => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const uniqueId = shopId || `shop_${Date.now()}`;
-    const response = await saveShopInfoInFirestore(uniqueId, shopData);
+    const response = await saveShopInfoInFirestore(shopId || Date.now().toString(), shopData);
     alert(response.message);
   };
 
+  if (loading) return <div>Loading...</div>; // Optionally show loading indicator
+
   return (
     <form onSubmit={handleSubmit}>
-      <input type="text" name="name" value={shopData.name || ''} onChange={handleChange} placeholder="Shop Name" />
-      <input type="text" name="description" value={shopData.description || ''} onChange={handleChange} placeholder="Description" />
-      <input type="text" name="location" value={shopData.location || ''} onChange={handleChange} placeholder="Location" />
-      {/* Add other fields as necessary */}
-      <button type="submit">Save</button>
+      <input
+        type="text"
+        name="name"
+        value={shopData.name}
+        onChange={handleChange}
+        placeholder="Shop Name"
+      />
+      <input
+        type="text"
+        name="description"
+        value={shopData.description}
+        onChange={handleChange}
+        placeholder="Description"
+      />
+      <input
+        type="text"
+        name="location"
+        value={shopData.location}
+        onChange={handleChange}
+        placeholder="Location"
+      />
+      {/* Add other input fields as necessary */}
+      <button type="submit" disabled={loading}>Save</button>
     </form>
   );
 };
