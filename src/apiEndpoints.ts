@@ -391,12 +391,7 @@ export async function addFormDataToFirestore(
   }
 }
 
-interface ShopUpdate {
-  name?: string;
-  description?: string;
-  location?: string;
-  // Add other shop properties here
-}
+type ShopUpdate = Record<string, any>;
 
 // Function to update shop information in Firestore
 export async function updateShopInfoInFirestore(
