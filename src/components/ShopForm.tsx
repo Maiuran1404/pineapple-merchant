@@ -57,34 +57,41 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
     // Check if the name includes '.' indicating a nested object like 'contactInfo.email'
     if (name.includes('.')) {
       const [firstKey, secondKey] = name.split('.') as [keyof Shop, keyof Shop['contactInfo']];
-      
+  
       // Safely updating nested 'contactInfo' properties
       if (firstKey === 'contactInfo' && (secondKey === 'email' || secondKey === 'phone')) {
-        setShopData(prevData => ({
+        setShopData((prevData) => ({
           ...prevData,
           [firstKey]: {
             ...prevData[firstKey],
-            [secondKey]: value,
+            [secondKey]: value || null, // Set to null if value is empty
           },
         }));
       }
     } else {
       // Directly updating shallow properties
-      setShopData(prevData => ({
+      setShopData((prevData) => ({
         ...prevData,
-        [name]: value,
+        [name]: value || null, // Set to null if value is empty
       }));
     }
   };
   
 
-  const handleOpeningHoursChange = (day: keyof Shop['openingHours'], key: 'open' | 'close', value: string) => {
-    setShopData(prevData => ({
+  const handleOpeningHoursChange = (
+    day: keyof Shop['openingHours'],
+    key: 'open' | 'close',
+    value: string
+  ) => {
+    setShopData((prevData) => ({
       ...prevData,
       openingHours: {
         ...prevData.openingHours,
-        [day]: { ...prevData.openingHours[day], [key]: value }
-      }
+        [day]: {
+          ...prevData.openingHours[day],
+          [key]: value || null, // Set to null if value is empty
+        },
+      },
     }));
   };
 
