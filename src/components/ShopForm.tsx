@@ -65,7 +65,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
     }
   };
 
-  const handleOpeningHoursChange = (day: string, key: 'open' | 'close', value: string) => {
+  const handleOpeningHoursChange = (day: keyof Shop['openingHours'], key: 'open' | 'close', value: string) => {
     setShopData(prevData => ({
       ...prevData,
       openingHours: {
