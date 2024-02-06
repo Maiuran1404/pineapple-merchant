@@ -16,7 +16,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
     contactInfo: { email: null, phone: null },
     image: null,
     location: null,
-    menu: { description: null, name: null, optionTypes: [] },
+    menu: [],
     openingHours: {
         monday: { open: null, close: null },
         tuesday: { open: null, close: null },
