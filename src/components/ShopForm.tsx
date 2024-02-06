@@ -23,9 +23,15 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
       try {
         setLoading(true);
         const response = await fetchShopData(shopId);
-        if (response.success) {
-          setShopData(response.data);
+        if (response.success && response.data) {
+          // Ensure response.data is treated as ShopData
+          setShopData(response.data as ShopData);
+        } else {
+          // Handle case where data is missing or response is unsuccessful
+          console.error('Failed to fetch shop data');
         }
+      } catch (error) {
+        console.error("Error loading shop data", error);
       } finally {
         setLoading(false);
       }
