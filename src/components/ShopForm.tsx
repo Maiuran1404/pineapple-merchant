@@ -204,7 +204,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
         <input
           style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
           type="text"
-          name="monday.open"
+          name="tuesday.open"
           value={shopData.openingHours.tuesday.open}
           onChange={(e) => handleOpeningHoursChange('tuesday', 'open', e.target.value)}
           placeholder="Open"
@@ -212,13 +212,107 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
         <input
           style={{ display: 'block', marginBottom: '10px' }}
           type="text"
-          name="monday.close"
+          name="tuesday.close"
           value={shopData.openingHours.tuesday.close}
           onChange={(e) => handleOpeningHoursChange('tuesday', 'close', e.target.value)}
           placeholder="Close"
         />
       </div>
-      {/* Repeat for other days as needed */}
+      <div style={{ marginLeft: '20px' }}>
+        <label>Wednesday Opening Hours:</label>
+        <input
+          style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
+          type="text"
+          name="wednesday.open"
+          value={shopData.openingHours.tuesday.open}
+          onChange={(e) => handleOpeningHoursChange('wednesday', 'open', e.target.value)}
+          placeholder="Open"
+        />
+        <input
+          style={{ display: 'block', marginBottom: '10px' }}
+          type="text"
+          name="wednesday.close"
+          value={shopData.openingHours.tuesday.close}
+          onChange={(e) => handleOpeningHoursChange('wednesday', 'close', e.target.value)}
+          placeholder="Close"
+        />
+      </div>
+      <div style={{ marginLeft: '20px' }}>
+        <label>Thursday Opening Hours:</label>
+        <input
+          style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
+          type="text"
+          name="thursday.open"
+          value={shopData.openingHours.tuesday.open}
+          onChange={(e) => handleOpeningHoursChange('thursday', 'open', e.target.value)}
+          placeholder="Open"
+        />
+        <input
+          style={{ display: 'block', marginBottom: '10px' }}
+          type="text"
+          name="thursday.close"
+          value={shopData.openingHours.tuesday.close}
+          onChange={(e) => handleOpeningHoursChange('thursday', 'close', e.target.value)}
+          placeholder="Close"
+        />
+      </div>
+      <div style={{ marginLeft: '20px' }}>
+        <label>Friday Opening Hours:</label>
+        <input
+          style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
+          type="text"
+          name="friday.open"
+          value={shopData.openingHours.tuesday.open}
+          onChange={(e) => handleOpeningHoursChange('friday', 'open', e.target.value)}
+          placeholder="Open"
+        />
+        <input
+          style={{ display: 'block', marginBottom: '10px' }}
+          type="text"
+          name="friday.close"
+          value={shopData.openingHours.tuesday.close}
+          onChange={(e) => handleOpeningHoursChange('friday', 'close', e.target.value)}
+          placeholder="Close"
+        />
+      </div>
+      <div style={{ marginLeft: '20px' }}>
+        <label>Saturday Opening Hours:</label>
+        <input
+          style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
+          type="text"
+          name="saturday.open"
+          value={shopData.openingHours.tuesday.open}
+          onChange={(e) => handleOpeningHoursChange('saturday', 'open', e.target.value)}
+          placeholder="Open"
+        />
+        <input
+          style={{ display: 'block', marginBottom: '10px' }}
+          type="text"
+          name="saturday.close"
+          value={shopData.openingHours.tuesday.close}
+          onChange={(e) => handleOpeningHoursChange('saturday', 'close', e.target.value)}
+          placeholder="Close"
+        />
+      </div>
+      <div style={{ marginLeft: '20px' }}>
+        <label>Sunday Opening Hours:</label>
+        <input
+          style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
+          type="text"
+          name="sunday.open"
+          value={shopData.openingHours.tuesday.open}
+          onChange={(e) => handleOpeningHoursChange('sunday', 'open', e.target.value)}
+          placeholder="Open"
+        />
+        <input
+          style={{ display: 'block', marginBottom: '10px' }}
+          type="text"
+          name="sunday.close"
+          value={shopData.openingHours.tuesday.close}
+          onChange={(e) => handleOpeningHoursChange('sunday', 'close', e.target.value)}
+          placeholder="Close"
+        />
+      </div>
       <button type="submit" disabled={loading}>Save</button>
     </form>
   );
