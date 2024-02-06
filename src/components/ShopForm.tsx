@@ -1,7 +1,6 @@
 import React, { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import { fetchShopData, saveShopInfoInFirestore } from '~/apiEndpoints';
 
-// Define TypeScript interfaces for better type checking and readability
 interface ShopData {
   name: string;
   description: string;
@@ -10,7 +9,7 @@ interface ShopData {
 }
 
 interface ShopFormProps {
-  shopId?: string; // Assuming shopId can be optional
+  shopId?: string; // ShopId can be optional
 }
 
 const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
@@ -19,15 +18,13 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
 
   useEffect(() => {
     async function loadShopData() {
-      if (!shopId) return; // Early return if no shopId
+      if (!shopId) return;
       try {
         setLoading(true);
         const response = await fetchShopData(shopId);
         if (response.success && response.data) {
-          // Ensure response.data is treated as ShopData
           setShopData(response.data as ShopData);
         } else {
-          // Handle case where data is missing or response is unsuccessful
           console.error('Failed to fetch shop data');
         }
       } catch (error) {
@@ -37,7 +34,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
       }
     }
 
-    loadShopData();
+    void loadShopData();
   }, [shopId]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -45,13 +42,28 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
     setShopData(prevData => ({ ...prevData, [name]: value }));
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const response = await saveShopInfoInFirestore(shopId || Date.now().toString(), shopData);
-    alert(response.message);
+    // Ensure shopId is a string before calling saveShopInfoInFirestore
+    if (shopId) {
+      setLoading(true); // Consider setting loading to true to disable the button
+      saveShopInfoInFirestore(shopId, shopData)
+        .then(response => {
+          alert(response.message);
+        })
+        .catch(error => {
+          console.error("Error saving shop info", error);
+          alert("Failed to save shop info");
+        })
+        .finally(() => {
+          setLoading(false); // Reset loading state
+        });
+    } else {
+      alert("Shop ID is missing");
+    }
   };
 
-  if (loading) return <div>Loading...</div>; // Optionally show loading indicator
+  if (loading) return <div>Loading...</div>;
 
   return (
     <form onSubmit={handleSubmit}>
@@ -76,7 +88,6 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
         onChange={handleChange}
         placeholder="Location"
       />
-      {/* Add other input fields as necessary */}
       <button type="submit" disabled={loading}>Save</button>
     </form>
   );
