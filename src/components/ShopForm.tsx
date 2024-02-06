@@ -224,7 +224,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
           type="text"
           name="wednesday.open"
-          value={shopData.openingHours.tuesday.open}
+          value={shopData.openingHours.wednesday.open}
           onChange={(e) => handleOpeningHoursChange('wednesday', 'open', e.target.value)}
           placeholder="Open"
         />
@@ -232,7 +232,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '10px' }}
           type="text"
           name="wednesday.close"
-          value={shopData.openingHours.tuesday.close}
+          value={shopData.openingHours.wednesday.close}
           onChange={(e) => handleOpeningHoursChange('wednesday', 'close', e.target.value)}
           placeholder="Close"
         />
@@ -243,7 +243,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
           type="text"
           name="thursday.open"
-          value={shopData.openingHours.tuesday.open}
+          value={shopData.openingHours.thursday.open}
           onChange={(e) => handleOpeningHoursChange('thursday', 'open', e.target.value)}
           placeholder="Open"
         />
@@ -251,7 +251,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '10px' }}
           type="text"
           name="thursday.close"
-          value={shopData.openingHours.tuesday.close}
+          value={shopData.openingHours.thursday.close}
           onChange={(e) => handleOpeningHoursChange('thursday', 'close', e.target.value)}
           placeholder="Close"
         />
@@ -262,7 +262,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
           type="text"
           name="friday.open"
-          value={shopData.openingHours.tuesday.open}
+          value={shopData.openingHours.friday.open}
           onChange={(e) => handleOpeningHoursChange('friday', 'open', e.target.value)}
           placeholder="Open"
         />
@@ -270,7 +270,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '10px' }}
           type="text"
           name="friday.close"
-          value={shopData.openingHours.tuesday.close}
+          value={shopData.openingHours.friday.close}
           onChange={(e) => handleOpeningHoursChange('friday', 'close', e.target.value)}
           placeholder="Close"
         />
@@ -281,7 +281,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
           type="text"
           name="saturday.open"
-          value={shopData.openingHours.tuesday.open}
+          value={shopData.openingHours.saturday.open}
           onChange={(e) => handleOpeningHoursChange('saturday', 'open', e.target.value)}
           placeholder="Open"
         />
@@ -289,7 +289,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '10px' }}
           type="text"
           name="saturday.close"
-          value={shopData.openingHours.tuesday.close}
+          value={shopData.openingHours.saturday.close}
           onChange={(e) => handleOpeningHoursChange('saturday', 'close', e.target.value)}
           placeholder="Close"
         />
@@ -300,7 +300,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '5px', marginTop: '5px' }}
           type="text"
           name="sunday.open"
-          value={shopData.openingHours.tuesday.open}
+          value={shopData.openingHours.sunday.open}
           onChange={(e) => handleOpeningHoursChange('sunday', 'open', e.target.value)}
           placeholder="Open"
         />
@@ -308,7 +308,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
           style={{ display: 'block', marginBottom: '10px' }}
           type="text"
           name="sunday.close"
-          value={shopData.openingHours.tuesday.close}
+          value={shopData.openingHours.sunday.close}
           onChange={(e) => handleOpeningHoursChange('sunday', 'close', e.target.value)}
           placeholder="Close"
         />
