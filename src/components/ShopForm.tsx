@@ -1,13 +1,21 @@
 import { useState, useEffect } from 'react';
 import { fetchShopData, saveShopInfoInFirestore }  from "~/apiEndpoints";
 
+interface ShopData {
+  name: string;
+  description: string;
+  location: string;
+  // Add other fields as necessary
+}
+
+interface ShopFormProps {
+  shopId?: string;
+}
+
+
 const ShopForm = ({ shopId }) => {
-  const [shopData, setShopData] = useState({
-    name: '',
-    description: '',
-    location: '',
-    // Initialize other fields as needed
-  });
+  const [shopData, setShopData] = useState<ShopData>({ name: '', description: '', location: '' });
+  // Rest of your component
   const [loading, setLoading] = useState(false); // Start with loading false, since we always show the form now
 
   useEffect(() => {
