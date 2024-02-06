@@ -72,7 +72,7 @@ function Order({ order }: OrderProps) {
             {order.buyerName}
           </h5>
           <p className="text-blue-gray-900 flex items-center gap-1.5 font-sans text-base font-normal leading-relaxed antialiased">
-            {format(order.purchaseTime.toDate(), "dd/MM/yyyy HH:mm")}
+            {/* {format(order.purchaseTime.toDate(), "dd/MM/yyyy HH:mm")} */}
           </p>
         </div>
         <p className="block font-sans text-base font-light leading-relaxed text-gray-700 antialiased">
