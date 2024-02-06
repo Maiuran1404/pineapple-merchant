@@ -1,19 +1,40 @@
-import { useState } from 'react';
-import { doc, setDoc } from 'firebase/firestore'; // Import Firestore methods from your Firebase SDK
+import React, { useState } from 'react';
+import { doc, setDoc } from 'firebase/firestore'; // Assuming you're using Firebase v9+
 import { saveShopInfoInFirestore } from '~/apiEndpoints';
 
-const Products = () => {
+interface Option {
+  id: string;
+  name: string;
+  description: string;
+  price: string;
+}
+
+interface OptionCategory {
+  name: string;
+  description: string;
+  options: Option[];
+}
+
+interface Item {
+  name: string;
+  price: string;
+  description: string;
+  imageUrl: string;
+  optionCategories: OptionCategory[];
+}
+
+const Products: React.FC = () => {
   const shopId = 'data'; // Replace with your actual shop ID
-  const [newItem, setNewItem] = useState({
+  const [newItem, setNewItem] = useState<Item>({
     name: '',
     price: '',
     description: '',
-    image: '',
-    optionCategories: [] // This will store the categories
+    imageUrl: '',
+    optionCategories: [],
   });
-  const [menu, setMenu] = useState([]);
+  const [menu, setMenu] = useState<Item[]>([]);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setNewItem((prevItem) => ({
       ...prevItem,
@@ -21,36 +42,24 @@ const Products = () => {
     }));
   };
 
-  const handleOptionCategoryChange = (e, index) => {
+  const handleOptionCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const { name, value } = e.target;
-    const updatedCategories = newItem.optionCategories.map((category, i) => {
-      if (index === i) {
-        return { ...category, [name]: value };
-      }
-      return category;
-    });
+    const updatedCategories = newItem.optionCategories.map((category, i) => i === index ? { ...category, [name]: value } : category);
     setNewItem({ ...newItem, optionCategories: updatedCategories });
   };
 
   const addOptionCategory = () => {
-    const newCategory = {
-      name: '',
-      description: '',
-      options: []
-    };
-    setNewItem({ ...newItem, optionCategories: [...newItem.optionCategories, newCategory] });
+    setNewItem({
+      ...newItem,
+      optionCategories: [...newItem.optionCategories, { name: '', description: '', options: [] }],
+    });
   };
 
-  const handleOptionChange = (categoryIndex, optionIndex, e) => {
+  const handleOptionChange = (categoryIndex: number, optionIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     const updatedCategories = newItem.optionCategories.map((category, i) => {
       if (i === categoryIndex) {
-        const updatedOptions = category.options.map((option, j) => {
-          if (j === optionIndex) {
-            return { ...option, [name]: value };
-          }
-          return option;
-        });
+        const updatedOptions = category.options.map((option, j) => j === optionIndex ? { ...option, [name]: value } : option);
         return { ...category, options: updatedOptions };
       }
       return category;
@@ -58,30 +67,21 @@ const Products = () => {
     setNewItem({ ...newItem, optionCategories: updatedCategories });
   };
 
-  const addOptionToCategory = (categoryIndex) => {
-    const newOption = {
-      id: '', // Generate or set a unique ID for the option
+  const addOptionToCategory = (categoryIndex: number) => {
+    const newOption: Option = {
+      id: '', // Ideally, generate a unique ID here
       name: '',
       description: '',
-      price: ''
+      price: '',
     };
-    const updatedCategories = newItem.optionCategories.map((category, i) => {
-      if (i === categoryIndex) {
-        return { ...category, options: [...category.options, newOption] };
-      }
-      return category;
-    });
+    const updatedCategories = newItem.optionCategories.map((category, i) =>
+      i === categoryIndex ? { ...category, options: [...category.options, newOption] } : category
+    );
     setNewItem({ ...newItem, optionCategories: updatedCategories });
   };
 
-
   const addItemToMenu = async () => {
-    if (
-      newItem.name.trim() === '' ||
-      newItem.price.trim() === '' ||
-      newItem.description.trim() === '' ||
-      newItem.imageUrl.trim() === ''
-    ) {
+    if (!newItem.name.trim() || !newItem.price.trim() || !newItem.description.trim() || !newItem.imageUrl.trim()) {
       alert('Please fill in all fields');
       return;
     }
@@ -93,20 +93,18 @@ const Products = () => {
       price: '',
       description: '',
       imageUrl: '',
+      optionCategories: [],
     });
 
     // Prepare shopData to be saved in Firestore
-    const shopData = {
-      menu: updatedMenu,
-    };
+    const shopData = { menu: updatedMenu };
 
     // Call the saveShopInfoInFirestore function to update the Firestore document
-    const saveResult = await saveShopInfoInFirestore(shopId, shopData);
-
-    if (saveResult.success) {
+    try {
+      const saveResult = await saveShopInfoInFirestore(shopId, shopData);
       console.log(saveResult.message);
-    } else {
-      console.error(saveResult.message);
+    } catch (error) {
+      console.error('Failed to save shop info:', error);
     }
   };
 
@@ -202,8 +200,9 @@ const Products = () => {
       </button>
       <br/>
       <button onClick={addItemToMenu}>Add Item to Menu</button>
+
       <h2>Menu:</h2>
-      <ul>
+      {/* <ul>
         {menu.map((item, index) => (
           <li key={index}>
             <p>Name: {item.name}</p>
@@ -212,98 +211,9 @@ const Products = () => {
             <img src={item.imageUrl} alt={item.name} />
           </li>
         ))}
-      </ul>
+      </ul> */}
     </div>
   );
 };
 
 export default Products;
-
-
-
-// import { useState } from "react";
-// import { BiPlus } from "react-icons/bi";
-// import Container from "~/components/Container";
-// import EditProductModal from "~/components/product/EditProductModal";
-// import Product from "~/components/product/Product";
-// import type { ItemProps } from "~/constants/orders";
-// // import useProducts from "~/hooks/useProducts";
-
-// function Products() {
-//   // const { isLoading, error, products, addProduct } = useProducts();
-//   const [open, setOpen] = useState(false);
-
-//   function handleSetOpen(open: boolean) {
-//     setOpen(open);
-//   }
-
-//   return (
-//     <Container>
-//       <div className="flex items-center justify-between">
-//         <h1 className="text-3xl font-bold tracking-tight text-gray-900">
-//           Your products
-//         </h1>
-//         <button
-//           onClick={() => handleSetOpen(!open)}
-//           type="button"
-//           title="Add a new product"
-//           className="flex h-10 w-10 items-center justify-center gap-1 rounded-full bg-gray-900 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900"
-//         >
-//           <BiPlus size={24} />
-//         </button>
-//       </div>
-
-//       <form className="mt-12">
-//         <div>
-//           <h2 className="sr-only">Products in your store</h2>
-
-//           {/* <ProductList
-//             isLoading={isLoading}
-//             error={error}
-//             products={products}
-//           /> */}
-//         </div>
-//       </form>
-
-//       {/* <EditProductModal
-//         updateProduct={addProduct}
-//         open={open}
-//         setOpen={handleSetOpen}
-//       /> */}
-//     </Container>
-//   );
-// }
-
-// export default Products;
-
-// const ProductList = ({
-//   isLoading,
-//   error,
-//   products,
-// }: {
-//   isLoading: boolean;
-//   error: unknown;
-//   products: ItemProps[];
-// }) => {
-//   if (!products || isLoading)
-//     return (
-//       <ul role="list" className="flex flex-col gap-3">
-//         {Array.from({ length: 3 }).map((_, i) => (
-//           <li
-//             key={i}
-//             className="h-64 w-full animate-pulse rounded-xl border border-gray-200 bg-gray-100"
-//           />
-//         ))}
-//       </ul>
-//     );
-
-//   if (error) return <div>An error has occurred</div>;
-
-//   return (
-//     <ul role="list" className="flex flex-col gap-3">
-//       {products.map((product) => (
-//         <Product key={product.id} product={product} />
-//       ))}
-//     </ul>
-//   );
-// };
