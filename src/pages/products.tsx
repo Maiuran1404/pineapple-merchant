@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { doc, setDoc } from 'firebase/firestore'; // Assuming you're using Firebase v9+
-import { fetchShopData, saveShopInfoInFirestore } from '~/apiEndpoints';
-import { useUser } from '@clerk/nextjs';
+import React, { useEffect, useState } from "react";
+import { doc, setDoc } from "firebase/firestore"; // Assuming you're using Firebase v9+
+import { fetchShopData, saveShopInfoInFirestore } from "~/apiEndpoints";
+import { useUser } from "@clerk/nextjs";
 
 interface Option {
   id: string;
@@ -25,13 +25,16 @@ interface Item {
 }
 
 const Products: React.FC = () => {
-  const {user} = useUser();
-  const shopId = typeof user?.publicMetadata?.shopId === 'string' ? user.publicMetadata.shopId : undefined;
+  const { user } = useUser();
+  const shopId =
+    typeof user?.publicMetadata?.shopId === "string"
+      ? user.publicMetadata.shopId
+      : undefined;
   const [newItem, setNewItem] = useState<Item>({
-    name: '',
-    price: '',
-    description: '',
-    imageUrl: '',
+    name: "",
+    price: "",
+    description: "",
+    imageUrl: "",
     optionCategories: [],
   });
   const [menu, setMenu] = useState<Item[]>([]);
@@ -46,10 +49,10 @@ const Products: React.FC = () => {
           const menuData: Item[] = result.data.menu as Item[];
           setMenu(menuData);
         } else {
-          console.error(result.message ?? 'Failed to fetch shop data');
+          console.error(result.message ?? "Failed to fetch shop data");
         }
       } else {
-        console.error('shopId is undefined, unable to fetch shop data');
+        console.error("shopId is undefined, unable to fetch shop data");
       }
     };
 
@@ -64,24 +67,38 @@ const Products: React.FC = () => {
     }));
   };
 
-  const handleOptionCategoryChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const handleOptionCategoryChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number,
+  ) => {
     const { name, value } = e.target;
-    const updatedCategories = newItem.optionCategories.map((category, i) => i === index ? { ...category, [name]: value } : category);
+    const updatedCategories = newItem.optionCategories.map((category, i) =>
+      i === index ? { ...category, [name]: value } : category,
+    );
     setNewItem({ ...newItem, optionCategories: updatedCategories });
   };
 
   const addOptionCategory = () => {
     setNewItem({
       ...newItem,
-      optionCategories: [...newItem.optionCategories, { name: '', description: '', options: [] }],
+      optionCategories: [
+        ...newItem.optionCategories,
+        { name: "", description: "", options: [] },
+      ],
     });
   };
 
-  const handleOptionChange = (categoryIndex: number, optionIndex: number, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOptionChange = (
+    categoryIndex: number,
+    optionIndex: number,
+    e: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const { name, value } = e.target;
     const updatedCategories = newItem.optionCategories.map((category, i) => {
       if (i === categoryIndex) {
-        const updatedOptions = category.options.map((option, j) => j === optionIndex ? { ...option, [name]: value } : option);
+        const updatedOptions = category.options.map((option, j) =>
+          j === optionIndex ? { ...option, [name]: value } : option,
+        );
         return { ...category, options: updatedOptions };
       }
       return category;
@@ -91,30 +108,37 @@ const Products: React.FC = () => {
 
   const addOptionToCategory = (categoryIndex: number) => {
     const newOption: Option = {
-      id: '', // Ideally, generate a unique ID here
-      name: '',
-      description: '',
-      price: '',
+      id: "", // Ideally, generate a unique ID here
+      name: "",
+      description: "",
+      price: "",
     };
     const updatedCategories = newItem.optionCategories.map((category, i) =>
-      i === categoryIndex ? { ...category, options: [...category.options, newOption] } : category
+      i === categoryIndex
+        ? { ...category, options: [...category.options, newOption] }
+        : category,
     );
     setNewItem({ ...newItem, optionCategories: updatedCategories });
   };
 
   const addItemToMenu = async () => {
-    if (!newItem.name.trim() || !newItem.price.trim() || !newItem.description.trim() || !newItem.imageUrl.trim()) {
-      alert('Please fill in all fields');
+    if (
+      !newItem.name.trim() ||
+      !newItem.price.trim() ||
+      !newItem.description.trim() ||
+      !newItem.imageUrl.trim()
+    ) {
+      alert("Please fill in all fields");
       return;
     }
 
     const updatedMenu = [...menu, newItem];
     setMenu(updatedMenu);
     setNewItem({
-      name: '',
-      price: '',
-      description: '',
-      imageUrl: '',
+      name: "",
+      price: "",
+      description: "",
+      imageUrl: "",
       optionCategories: [],
     });
 
@@ -122,19 +146,23 @@ const Products: React.FC = () => {
     const shopData = { menu: updatedMenu };
 
     // Call the saveShopInfoInFirestore function to update the Firestore document
-    try {
-      const saveResult = await saveShopInfoInFirestore(shopId, shopData);
-      console.log(saveResult.message);
-    } catch (error) {
-      console.error('Failed to save shop info:', error);
+    if (typeof shopId === "string") {
+      // `shopId` is guaranteed to be a string here
+      try {
+        const saveResult = await saveShopInfoInFirestore(shopId, shopData);
+        console.log(saveResult.message);
+      } catch (error) {
+        console.error("Failed to save shop info:", error);
+      }
+    } else {
+      console.error("shopId is undefined, cannot save shop info");
     }
   };
 
-
   return (
     <div>
-      <br/>
-      <br/>
+      <br />
+      <br />
       <h2>Menu:</h2>
       <ul>
         {menu.map((item, index) => (
@@ -146,8 +174,8 @@ const Products: React.FC = () => {
           </li>
         ))}
       </ul>
-      <br/>
-      <br/>
+      <br />
+      <br />
       <h1>Menu Page for Shop: {shopId}</h1>
       <div>
         <label>Name:</label>
@@ -202,7 +230,10 @@ const Products: React.FC = () => {
             value={category.description}
             onChange={(e) => handleOptionCategoryChange(e, categoryIndex)}
           />
-          <button type="button" onClick={() => addOptionToCategory(categoryIndex)}>
+          <button
+            type="button"
+            onClick={() => addOptionToCategory(categoryIndex)}
+          >
             Add Option to Category
           </button>
           {category.options.map((option, optionIndex) => (
@@ -212,21 +243,27 @@ const Products: React.FC = () => {
                 name="name"
                 placeholder="Option Name"
                 value={option.name}
-                onChange={(e) => handleOptionChange(categoryIndex, optionIndex, e)}
+                onChange={(e) =>
+                  handleOptionChange(categoryIndex, optionIndex, e)
+                }
               />
               <input
                 type="text"
                 name="description"
                 placeholder="Option Description"
                 value={option.description}
-                onChange={(e) => handleOptionChange(categoryIndex, optionIndex, e)}
+                onChange={(e) =>
+                  handleOptionChange(categoryIndex, optionIndex, e)
+                }
               />
               <input
                 type="text"
                 name="price"
                 placeholder="Option Price"
                 value={option.price}
-                onChange={(e) => handleOptionChange(categoryIndex, optionIndex, e)}
+                onChange={(e) =>
+                  handleOptionChange(categoryIndex, optionIndex, e)
+                }
               />
             </div>
           ))}
@@ -235,7 +272,7 @@ const Products: React.FC = () => {
       <button type="button" onClick={addOptionCategory}>
         Add Option Category
       </button>
-      <br/>
+      <br />
       <button onClick={addItemToMenu}>Add Item to Menu</button>
 
       <h2>Menu:</h2>
