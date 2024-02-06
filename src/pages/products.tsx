@@ -255,7 +255,7 @@ const Products: React.FC = () => {
         Add Option Category
       </button>
       <br />
-      <button onClick={addItemToMenu}>Add Item to Menu</button>
+      <button onClick={() => addItemToMenu()}>Add Item to Menu</button>
 
       <h2>Menu:</h2>
       {/* <ul>
