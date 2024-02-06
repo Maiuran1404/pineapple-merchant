@@ -47,7 +47,7 @@ type OpeningHours = {
     sunday: Day;
 };
 
-type MenuOption = {
+export type MenuOption = {
     id: string;
     name: string;
     description: string;
