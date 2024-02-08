@@ -5,27 +5,27 @@ import { useState } from "react";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
 import { currency } from "~/constants/misc";
 import type { ItemProps } from "~/constants/orders";
-// import useProducts from "~/hooks/useProducts";
-// import EditProductModal from "./EditProductModal";
+import useProducts from "~/hooks/useProducts";
+import EditProductModal from "./EditProductModal";
 
 const variants = {
   exit: { opacity: 0, scale: 0.8, transition: { duration: 0.3 } },
 };
 
 function Product({ product }: { product: ItemProps }) {
-  // const { removeProduct, updateProduct } = useProducts();
+  const { removeProduct, updateProduct } = useProducts();
   const [outOfStock, setOutOfStock] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // function handleRemoveProduct(e: React.MouseEvent<HTMLButtonElement>) {
-  //   e.preventDefault();
-  //   const shouldRemove = window.confirm(
-  //     "Are you sure you want to remove this product?",
-  //   );
-  //   if (shouldRemove) {
-  //     removeProduct(product);
-  //   }
-  // }
+  function handleRemoveProduct(e: React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    const shouldRemove = window.confirm(
+      "Are you sure you want to remove this product?",
+    );
+    if (shouldRemove) {
+      removeProduct(product);
+    }
+  }
 
   function handleToggleOutOfStock() {
     const shouldToggle = window.confirm(

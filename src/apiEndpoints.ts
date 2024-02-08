@@ -112,46 +112,41 @@ export async function getStoreItems(shopID: string) {
   }
 }
 
-export async function getStore(user: UserInfo | null) {
-  if (!user?.uid) {
-    console.error("User is undefined:", user);
+export async function getStore(shopId: string | null) {
+  if (!shopId) {
+    console.error("Shop is undefined:", shopId);
     return null;
   }
 
-  const clerkRef = doc(database, "storeclerk", user.uid);
+  const shopRef = doc(database, "shops", shopId);
 
   try {
-    const clerk = await getDoc(clerkRef);
-    if (clerk.exists()) {
-      const clerkData = clerk.data();
-      const storeRef = doc(database, "shops");
-
-      const store = await getDoc(storeRef);
-      if (store.exists()) {
-        const fireStoreShop = { ...store.data(), id: store.id };
-        return fireStoreShop;
-      }
+    const shopDoc = await getDoc(shopRef);
+    if (shopDoc.exists()) {
+      console.log("Shop exists:", shopDoc.data());
+      return { ...shopDoc.data(), id: shopDoc.id };
+    } else {
+      console.log("No such shop!");
+      return null;
     }
   } catch (error) {
-    console.error("Error checking user in Firestore:", error);
+    console.error("Error retrieving shop from Firestore:", error);
     return null; // Handle the error as needed
   }
 }
 
-export async function addStoreItem(shopID: string, item: ItemProps) {
+export async function addStoreItem(shopId: string, item: ItemProps) {
+  console.log("adding", shopId, item);
   try {
     // Reference to the "products" sub-collection within the specified shop
-    const productsCollection = collection(
-      doc(database, "shops", shopID),
-      "menu",
-    );
+    const shopDocRef = doc(database, "shops", shopId);
 
     let image = "";
 
     if (item.image) {
       // Upload image and get doc id
 
-      const result = await uploadImage(item.image, shopID);
+      const result = await uploadImage(item.image, shopId);
 
       image = result ?? "";
     }
@@ -162,7 +157,9 @@ export async function addStoreItem(shopID: string, item: ItemProps) {
     };
 
     // Add a new document to the "products" sub-collection with the provided data
-    const newItemRef = await setDoc(doc(productsCollection), newItemData);
+    const newItemRef = await updateDoc(shopDocRef, {
+      menu: arrayUnion(newItemData),
+    });
 
     // Log the newly created item's ID
     console.log("New item added with ID:", newItemRef);
@@ -399,7 +396,7 @@ export async function updateShopInfoInFirestore(
   updatedData: ShopUpdate,
 ): Promise<{ success: boolean; message: string }> {
   const shopRef = doc(database, "shops", shopId);
-  
+
   try {
     // Using as any to bypass the TypeScript error
     await updateDoc(shopRef, updatedData);
@@ -408,7 +405,10 @@ export async function updateShopInfoInFirestore(
   } catch (error) {
     console.error("Error updating shop information:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
-    return { success: false, message: `Error updating shop information: ${errorMessage}` };
+    return {
+      success: false,
+      message: `Error updating shop information: ${errorMessage}`,
+    };
   }
 }
 
@@ -425,7 +425,10 @@ export async function fetchShopData(shopId: string) {
   } catch (error) {
     console.error("Error fetching shop data:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
-    return { success: false, message: `Error fetching shop data: ${errorMessage}` };
+    return {
+      success: false,
+      message: `Error fetching shop data: ${errorMessage}`,
+    };
   }
 }
 
@@ -435,15 +438,21 @@ export async function saveShopInfoInFirestore(
   shopData: Partial<Shop> | MenuItem[],
 ): Promise<{ success: boolean; message: string }> {
   const shopRef = doc(database, "shops", shopId);
-  
+
   try {
     await setDoc(shopRef, shopData, { merge: true }); // This will create the document if it doesn't exist or update it if it does
-    const action = shopData.hasOwnProperty('id') ? "updated" : "created";
+    const action = shopData.hasOwnProperty("id") ? "updated" : "created";
     console.log(`Shop information ${action} successfully`);
-    return { success: true, message: `Shop information ${action} successfully` };
+    return {
+      success: true,
+      message: `Shop information ${action} successfully`,
+    };
   } catch (error) {
     console.error("Error saving shop information:", error);
     const errorMessage = error instanceof Error ? error.message : String(error);
-    return { success: false, message: `Error saving shop information: ${errorMessage}` };
+    return {
+      success: false,
+      message: `Error saving shop information: ${errorMessage}`,
+    };
   }
 }

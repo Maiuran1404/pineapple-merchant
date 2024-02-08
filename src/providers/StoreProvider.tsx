@@ -1,74 +1,71 @@
-// import { useQuery } from "@tanstack/react-query";
-// import React, { createContext, useEffect } from "react";
-// import { getStore } from "~/apiEndpoints";
-// import { useUser } from "./UserProvider";
+import { useUser } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
+import React, { createContext, useEffect, useState } from "react";
+import { getStore } from "~/apiEndpoints";
 
-// interface StoreProps {
-//   id(
-//     id: any,
-//     setOrders: React.Dispatch<
-//       React.SetStateAction<import("../constants/orders").OrderProps[]>
-//     >,
-//   ): unknown;
-//   uid: string;
-//   name: string;
-//   address: string;
-//   phone: string;
-//   email: string;
-//   website: string;
-//   imageUrl: string;
-//   cardColour: string;
-//   emoji: string;
-//   freePoints: number;
-// }
+interface StoreProps {
+  id(
+    id: any,
+    setOrders: React.Dispatch<
+      React.SetStateAction<import("../constants/orders").OrderProps[]>
+    >,
+  ): unknown;
+  uid: string;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+  imageUrl: string;
+  cardColour: string;
+  emoji: string;
+  freePoints: number;
+}
 
-// interface StoreContextType {
-//   isLoading: boolean;
-//   error: unknown;
-//   store: StoreProps | undefined;
+interface StoreContextType {
+  isLoading: boolean;
+  error: unknown;
+  store: StoreProps | undefined;
 
-//   updateInfo: (info: StoreProps) => void;
-// }
+  updateInfo: (info: StoreProps) => void;
+}
 
-// // Define the context
-// export const StoreContext = createContext<StoreContextType | null>(null);
+// Define the context
+export const StoreContext = createContext<StoreContextType | null>(null);
 
-// function StoreProvider({ children }: { children: React.ReactNode }) {
-//   const { user } = useUser();
-//   const [storeID, setStoreID] = React.useState<string | null>(null);
+function StoreProvider({ children }: { children: React.ReactNode }) {
+  const { user } = useUser();
+  const [shop, setShop] = useState<any>(null);
+  const [shopId, setShopId] = useState<string>();
 
-//   // useEffect(() => {
-//   //   async function fetchStoreID(): Promise<void> {
-//   //     // const fireStoreUser = await getFirestoreUser(user);
+  useEffect(() => {
+    if (user?.publicMetadata?.shopId) {
+      const { shopId } = user.publicMetadata;
+      setShopId(shopId);
+    }
+  }, [user]);
 
-//   //     // const storeID = (fireStoreUser?.storeId as string) ?? null;
-//   //     setStoreID(storeID);
-//   //   }
+  const {
+    isLoading,
+    error,
+    data: store,
+  } = useQuery({
+    queryKey: ["store", shopId],
+    queryFn: () => getStore(shopId),
+    enabled: !!shopId,
+  });
 
-//   //   void fetchStoreID();
-//   // }, [user]);
+  function updateInfo(info: StoreProps) {
+    console.log(info);
+  }
 
-//   const {
-//     isLoading,
-//     error,
-//     data: store,
-//   } = useQuery({
-//     queryKey: ["store", storeID],
-//     queryFn: () => getStore(storeID),
-//     enabled: !!storeID,
-//   });
+  console.log(store);
 
-//   function updateInfo(info: StoreProps) {
-//     console.log(info);
-//   }
+  const value = { isLoading, error, store, updateInfo };
 
-//   console.log(store);
+  return (
+    <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
+  );
+}
 
-//   const value = { isLoading, error, store, updateInfo };
-
-//   return (
-//     <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
-//   );
-// }
-
-// export default StoreProvider;
+export default StoreProvider;

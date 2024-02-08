@@ -79,30 +79,33 @@ export default function EditProductModal({
   }
   
 
-  // async function handleApplyChanges() {
-  //   setIsLoading(true);
+  async function handleApplyChanges() {
+    console.log('the product', product);
+    console.log('the name', name);
+
+    setIsLoading(true);
   
-  //   if (product?.id) {
-  //     // Await the async operation to ensure it completes before proceeding
-  //     await updateProduct({
-  //       ...product,
-  //       name,
-  //       price: Number(price),
-  //       description,
-  //       image,
-  //       imageAlt: image?.name,
-  //     } as ItemProps); // Assert that the object matches `ItemProps`
+    if (product?.id) {
+      // Await the async operation to ensure it completes before proceeding
+      await updateProduct({
+        ...product,
+        name,
+        price: Number(price),
+        description,
+        image,
+        imageAlt: image?.name,
+      } as ItemProps); // Assert that the object matches `ItemProps`
       
-  //   } else {
-  //     // Handle the case where product.id is undefined
-  //     // Maybe show an error message or ensure this function can't be called without a valid id
-  //     console.error("Product ID is undefined, cannot update product.");
-  //     // Implement your logic for handling this error case
-  //   }
+    } else {
+      // Handle the case where product.id is undefined
+      // Maybe show an error message or ensure this function can't be called without a valid id
+      console.error("Product ID is undefined, cannot update product.");
+      // Implement your logic for handling this error case
+    }
   
-  //   setOpen(false);
-  //   setIsLoading(false);
-  // }
+    setOpen(false);
+    setIsLoading(false);
+  }
   
   
   return (
@@ -253,7 +256,7 @@ export default function EditProductModal({
                             Photo
                           </label>
                           <div className="mt-2 flex items-center gap-x-3">
-                            {/* <div className="relative h-12 w-12 rounded-full border border-gray-300 bg-gray-300 text-gray-300">
+                            <div className="relative h-12 w-12 rounded-full border border-gray-300 bg-gray-300 text-gray-300">
                               {imagePreview && (
                                 <img
                                   src={imagePreview}
@@ -262,7 +265,7 @@ export default function EditProductModal({
                                   aria-hidden="true"
                                 />
                               )}
-                            </div> */}
+                            </div>
                             <form ref={formRef}>
                               <input
                                 type="file"
@@ -284,13 +287,13 @@ export default function EditProductModal({
                 </form>
 
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
-                  {/* <button
+                  <button
                     type="button"
                     className="inline-flex w-full justify-center rounded-md bg-gray-900 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900 sm:col-start-2"
                     onClick={handleApplyChanges}
                   >
                     Apply changes
-                  </button> */}
+                  </button>
                   <button
                     type="button"
                     className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
