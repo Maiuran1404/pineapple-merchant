@@ -95,7 +95,7 @@ export async function getStoreItems(shopID: string) {
       const shopData = shopDoc.data();
       const products = shopData.menu; // assuming 'menu' is the key for the menu items array
 
-      return products.map((item: any, index: { toString: () => any; }) => ({
+      return products.map((item: any, index: { toString: () => any }) => ({
         id: index.toString(), // Since there's no document id, we can use the array index as a unique id
         ...item,
       }));
@@ -170,7 +170,11 @@ interface UpdatedProperties extends Partial<ItemProps> {
   newImage?: File; // Optional new image for the item
 }
 
-export async function updateStoreItem(shopID: string, itemID: string, updatedProperties: UpdatedProperties): Promise<number | null> {
+export async function updateStoreItem(
+  shopID: string,
+  itemID: string,
+  updatedProperties: UpdatedProperties,
+): Promise<number | null> {
   const shopRef = doc(database, "shops", shopID);
 
   try {
@@ -181,31 +185,42 @@ export async function updateStoreItem(shopID: string, itemID: string, updatedPro
     }
 
     const shopData = shopSnap.data();
-    const menu = shopData.menu as ItemProps[]; // Cast to ItemProps[] for type safety
+    const menu = shopData.menu as ItemProps[];
 
     const index = Number(itemID);
-    if (isNaN(index) || index < 0 || index >= menu.length) { // Improved check for validity of index
+    if (isNaN(index) || index < 0 || index >= menu.length) {
+      // Improved check for validity of index
       console.error("Item not found");
       return null;
     }
 
-    if (updatedProperties.newImage && updatedProperties.newImage instanceof File) {
+    if (
+      updatedProperties.newImage &&
+      updatedProperties.newImage instanceof File
+    ) {
       const imageURL = await uploadImage(updatedProperties.newImage, shopID);
       updatedProperties.imageURL = imageURL;
       delete updatedProperties.newImage;
     }
 
-    // Filter valid properties to update, avoiding direct manipulation of updatedProperties
-    const validProperties: Partial<ItemProps> = Object.entries(updatedProperties)
-      .reduce<Partial<ItemProps>>((acc, [key, value]) => {
-        if (value !== undefined && !(value instanceof File)) {
-          acc[key as keyof ItemProps] = value;
-        }
-        return acc;
-      }, {});
+    const validProperties: Partial<ItemProps> = Object.entries(
+      updatedProperties,
+    ).reduce<Partial<ItemProps>>((acc, [key, value]) => {
+      if (value !== undefined && !(value instanceof File)) {
+        acc[key as keyof ItemProps] = value;
+      }
+      return acc;
+    }, {});
 
-    const updatedItem = { ...menu[index], ...validProperties };
+    const updatedItem: ItemProps = { ...menu[index], ...validProperties };
+
     menu[index] = updatedItem;
+
+    // Ensure updatedItem satisfies ItemProps interface, particularly that `id` is not undefined
+    if (updatedItem.id === undefined) {
+      console.error("Updated item must have an id");
+      return null;
+    }
 
     await updateDoc(shopRef, { menu });
 
@@ -217,7 +232,10 @@ export async function updateStoreItem(shopID: string, itemID: string, updatedPro
   }
 }
 
-export async function removeStoreItem(shopID: string, itemIndex: string | number) {
+export async function removeStoreItem(
+  shopID: string,
+  itemIndex: string | number,
+) {
   const shopDocRef = doc(database, "shops", shopID);
 
   try {
@@ -234,7 +252,7 @@ export async function removeStoreItem(shopID: string, itemIndex: string | number
 
         // Update the 'menu' array field with the updated array
         await updateDoc(shopDocRef, {
-          menu: updatedMenu
+          menu: updatedMenu,
         });
 
         console.log("Item removed at index:", itemIndex);
