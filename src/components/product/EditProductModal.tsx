@@ -246,14 +246,15 @@ export default function EditProductModal({
                           </label>
                           <div className="mt-2 flex items-center gap-x-3">
                             <div className="relative h-12 w-12 rounded-full border border-gray-300 bg-gray-300 text-gray-300">
-                              {imagePreview && (
-                                <img
-                                  src={imagePreview}
-                                  alt={image?.name ?? "Product image"}
-                                  className="h-12 w-12 rounded-full"
-                                  aria-hidden="true"
-                                />
-                              )}
+                              {imagePreview &&
+                                typeof imagePreview === "string" && (
+                                  <img
+                                    src={imagePreview}
+                                    alt={image?.name ?? "Product image"}
+                                    className="h-12 w-12 rounded-full"
+                                    aria-hidden="true"
+                                  />
+                                )}
                             </div>
                             <form ref={formRef}>
                               <input
