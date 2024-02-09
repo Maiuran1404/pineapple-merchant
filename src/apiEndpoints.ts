@@ -214,7 +214,7 @@ export async function updateStoreItem(
 
     const updatedItem = { ...menu[index], ...validProperties };
 
-    menu[index] = updatedItem;
+    menu[index] = updatedItem as ItemProps;
 
     // Ensure updatedItem satisfies ItemProps interface, particularly that `id` is not undefined
     if (updatedItem.id === undefined) {
