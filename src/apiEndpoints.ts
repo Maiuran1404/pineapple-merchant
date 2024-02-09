@@ -216,13 +216,14 @@ export async function updateStoreItem(shopID: string, itemID: string, updatedPro
     }
 
     // Remove any properties that are still undefined or are File objects
-    const validProperties = {};
+    const validProperties: Partial<ItemProps> = {};
     Object.keys(updatedProperties).forEach((key) => {
       const value = updatedProperties[key];
       if (value !== undefined && !(value instanceof File)) {
         validProperties[key] = value;
       }
     });
+
 
     // Update the item properties
     const updatedItem = { ...menu[index], ...validProperties };
