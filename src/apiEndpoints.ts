@@ -121,7 +121,6 @@ export async function getStore(shopId: string | null) {
   try {
     const shopDoc = await getDoc(shopRef);
     if (shopDoc.exists()) {
-      console.log("Shop exists:", shopDoc.data());
       return { ...shopDoc.data(), id: shopDoc.id };
     } else {
       console.log("No such shop!");

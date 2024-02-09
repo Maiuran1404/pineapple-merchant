@@ -59,8 +59,6 @@ function StoreProvider({ children }: { children: React.ReactNode }) {
     console.log(info);
   }
 
-  console.log(store);
-
   const value = { isLoading, error, store, updateInfo };
 
   return (
