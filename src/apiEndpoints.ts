@@ -212,7 +212,7 @@ export async function updateStoreItem(
       return acc;
     }, {});
 
-    const updatedItem: ItemProps = { ...menu[index], ...validProperties };
+    const updatedItem = { ...menu[index], ...validProperties };
 
     menu[index] = updatedItem;
 
