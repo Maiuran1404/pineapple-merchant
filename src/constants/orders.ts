@@ -23,6 +23,7 @@ export interface ItemProps {
   price: number;
   inStock?: boolean;
   newImage?: File | undefined;
+  imageUrL?: string;
 }
 
 export type OrderStatusType =
