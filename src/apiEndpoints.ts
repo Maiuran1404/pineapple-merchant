@@ -14,6 +14,7 @@ import {
   FirestoreError,
   addDoc,
   arrayUnion,
+  arrayRemove,
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
@@ -241,21 +242,34 @@ export async function updateStoreItem(shopID, itemID, updatedProperties) {
   }
 }
 
-export async function removeStoreItem(shopID: string, itemID: string) {
+export async function removeStoreItem(shopID, itemIndex) {
+  const shopDocRef = doc(database, "shops", shopID);
+
   try {
-    // Reference to the "products" sub-collection within the specified shop
-    const productsCollection = collection(
-      doc(database, "shops", shopID),
-      "menu",
-    );
+    // Get the current data of the shop document
+    const shopDoc = await getDoc(shopDocRef);
+    if (shopDoc.exists()) {
+      const shopData = shopDoc.data();
 
-    // Remove the specified item from the "products" sub-collection
-    await deleteDoc(doc(productsCollection, itemID));
+      // Ensure the itemIndex is within the bounds of the menu array
+      if (itemIndex >= 0 && itemIndex < shopData.menu.length) {
+        // Remove the menu item from the 'menu' array field by its index
+        const updatedMenu = [...shopData.menu]; // Copy the menu array
+        updatedMenu.splice(itemIndex, 1); // Remove the item at itemIndex
 
-    // Log the removed item's ID
-    console.log("Item removed with ID:", itemID);
+        // Update the 'menu' array field with the updated array
+        await updateDoc(shopDocRef, {
+          menu: updatedMenu
+        });
+
+        console.log("Item removed at index:", itemIndex);
+      } else {
+        console.log("Invalid item index:", itemIndex);
+      }
+    } else {
+      console.log("No document found with the ID:", shopID);
+    }
   } catch (error) {
-    // Handle any errors that occurred during the removal
     console.error("Error removing store item:", error);
   }
 }
