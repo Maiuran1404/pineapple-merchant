@@ -166,7 +166,7 @@ export async function addStoreItem(shopId: string, item: ItemProps) {
   }
 }
 
-export async function updateStoreItem(shopID, itemID, updatedProperties) {
+export async function updateStoreItem(shopID: string, itemID: string, updatedProperties: ItemProps) {
   // Reference to the shop document
   const shopRef = doc(database, "shops", shopID);
 
@@ -242,7 +242,7 @@ export async function updateStoreItem(shopID, itemID, updatedProperties) {
   }
 }
 
-export async function removeStoreItem(shopID, itemIndex) {
+export async function removeStoreItem(shopID: string, itemIndex: string | number) {
   const shopDocRef = doc(database, "shops", shopID);
 
   try {
