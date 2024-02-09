@@ -210,7 +210,7 @@ export async function updateStoreItem(shopID: string, itemID: string, updatedPro
       updatedProperties.newImage instanceof File
     ) {
       // Assuming uploadImage returns a Promise that resolves to the URL of the uploaded image
-      const imageURL = await uploadImage(updatedProperties.newImage);
+      const imageURL = await uploadImage(updatedProperties.newImage, shopID);
       updatedProperties.imageURL = imageURL; // Save the URL to the updated properties
       delete updatedProperties.newImage; // Remove the File object from the properties
     }
