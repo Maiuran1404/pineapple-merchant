@@ -95,7 +95,7 @@ export async function getStoreItems(shopID: string) {
       const shopData = shopDoc.data();
       const products = shopData.menu; // assuming 'menu' is the key for the menu items array
 
-      return products.map((item, index) => ({
+      return products.map((item: any, index: { toString: () => any; }) => ({
         id: index.toString(), // Since there's no document id, we can use the array index as a unique id
         ...item,
       }));
