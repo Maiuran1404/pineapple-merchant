@@ -22,6 +22,7 @@ export interface ItemProps {
   imageAlt?: string;
   price: number;
   inStock?: boolean;
+  newImage?: File | undefined;
 }
 
 export type OrderStatusType =
