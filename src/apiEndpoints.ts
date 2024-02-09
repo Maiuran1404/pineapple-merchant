@@ -166,6 +166,10 @@ export async function addStoreItem(shopId: string, item: ItemProps) {
   }
 }
 
+interface UpdatedProperties extends Partial<ItemProps> {
+  newImage?: File; // Optional new image for the item
+}
+
 export async function updateStoreItem(shopID: string, itemID: string, updatedProperties: UpdatedProperties): Promise<number | null> {
   const shopRef = doc(database, "shops", shopID);
 
