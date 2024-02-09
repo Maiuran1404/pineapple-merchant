@@ -41,9 +41,11 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
 
   const addProduct = useCallback(
     async (product: ItemProps) => {
+      console.log("This is the add product", store?.id, product, product.name)
       try {
+        console.log("trying to add yo");
         const resp = await addStoreItem(store.id, product);
-
+        console.log("trying to add yo - sent to AddStoreItem");
         if (resp) {
           await queryClient.invalidateQueries({
             queryKey: ["products", store.id],
@@ -84,6 +86,7 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
 
   const updateProduct = useCallback(
     async (updatedProduct: ItemProps) => {
+      console.log("This is the update product", store?.id, product, product.name)
       try {
         const resp = await updateStoreItem(store.id, updatedProduct);
         if (resp) {

@@ -54,23 +54,23 @@ function Product({ product }: { product: ItemProps }) {
       >
         <div className="flex items-center justify-between border-b border-gray-900/5 bg-gray-50 p-6">
           <div className="flex items-center gap-x-4">
-            {/* <img
+            <img
               src={product.image}
               alt={product.imageAlt ?? product.name}
               className="h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10"
-            /> */}
+            />
             <div className="text-sm font-medium leading-6 text-gray-900">
               {product?.name}
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {/* <button
+            <button
               title="Delete product"
               onClick={handleRemoveProduct}
               className="cursor-pointer rounded-full bg-gray-200 p-2 text-gray-600 hover:bg-red-500 hover:text-white"
             >
               <BiTrash size={20} />
-            </button> */}
+            </button>
             <button
               onClick={handleToggleModal}
               title="Edit product"
@@ -115,13 +115,13 @@ function Product({ product }: { product: ItemProps }) {
           </div>
         </dl>
       </motion.li>
-{/* 
+
       <EditProductModal
         product={product}
         updateProduct={updateProduct}
         open={open}
         setOpen={setOpen}
-      /> */}
+      />
     </>
   );
 }

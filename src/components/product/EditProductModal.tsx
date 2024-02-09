@@ -71,43 +71,32 @@ export default function EditProductModal({
   function clearFile() {
     setImage(undefined);
     setImagePreview(null);
-  
+
     // Check if formRef.current is not null before calling reset
     if (formRef.current !== null) {
       formRef.current.reset();
     }
   }
-  
 
-  async function handleApplyChanges() {
-    console.log('the product', product);
-    console.log('the name', name);
+  function handleApplyChanges() {
+    console.log("the name", name);
 
     setIsLoading(true);
-  
-    if (product?.id) {
-      // Await the async operation to ensure it completes before proceeding
-      await updateProduct({
-        ...product,
-        name,
-        price: Number(price),
-        description,
-        image,
-        imageAlt: image?.name,
-      } as ItemProps); // Assert that the object matches `ItemProps`
-      
-    } else {
-      // Handle the case where product.id is undefined
-      // Maybe show an error message or ensure this function can't be called without a valid id
-      console.error("Product ID is undefined, cannot update product.");
-      // Implement your logic for handling this error case
-    }
-  
+
+    // Await the async operation to ensure it completes before proceeding
+    void updateProduct({
+      ...product,
+      name,
+      price: Number(price),
+      description,
+      image,
+      imageAlt: image?.name,
+    } as ItemProps); // Assert that the object matches `ItemProps`
+
     setOpen(false);
     setIsLoading(false);
   }
-  
-  
+
   return (
     <Transition.Root show={open} as={Fragment}>
       <Dialog

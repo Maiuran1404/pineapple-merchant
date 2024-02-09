@@ -13,6 +13,7 @@ import {
   onSnapshot,
   FirestoreError,
   addDoc,
+  arrayUnion,
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
@@ -82,7 +83,6 @@ export async function updateFirestoreCollection(
 
 export async function getStoreItems(shopID: string) {
   const shopRef = doc(database, "shops", shopID);
-  const productsRef = collection(shopRef, "menu");
 
   try {
     // Get the shop document
@@ -90,16 +90,14 @@ export async function getStoreItems(shopID: string) {
 
     // If the shop document exists
     if (shopDoc.exists()) {
-      // Get the products from the sub-collection
-      const productsQuerySnapshot = await getDocs(productsRef);
+      // Extract the menu items directly from the shop document data
+      const shopData = shopDoc.data();
+      const products = shopData.menu; // assuming 'menu' is the key for the menu items array
 
-      // Extract data from products query snapshot
-      const products = productsQuerySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
+      return products.map((item, index) => ({
+        id: index.toString(), // Since there's no document id, we can use the array index as a unique id
+        ...item,
       }));
-
-      return products;
     } else {
       // Handle the case where the shop document doesn't exist
       console.error("Shop not found");
@@ -140,14 +138,10 @@ export async function addStoreItem(shopId: string, item: ItemProps) {
   try {
     // Reference to the "products" sub-collection within the specified shop
     const shopDocRef = doc(database, "shops", shopId);
-
     let image = "";
-
     if (item.image) {
       // Upload image and get doc id
-
       const result = await uploadImage(item.image, shopId);
-
       image = result ?? "";
     }
 

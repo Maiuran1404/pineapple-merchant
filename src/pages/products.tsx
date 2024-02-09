@@ -8,7 +8,7 @@ import type { ItemProps } from "~/constants/orders";
 import useProducts from "~/hooks/useProducts";
 
 function Products() {
-  const { isLoading, error, products, addProduct } = useProducts();
+  const { isLoading, error, products, addProduct, updateProduct } = useProducts();
   const [open, setOpen] = useState(false);
 
   function handleSetOpen(open: boolean) {
@@ -43,8 +43,9 @@ function Products() {
         </div>
       </form>
 
+      {/* Treating this as a addProduct modal*/}
       <EditProductModal
-        updateProduct={addProduct}
+        updateProduct={addProduct} 
         open={open}
         setOpen={handleSetOpen}
       />
