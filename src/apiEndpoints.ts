@@ -244,20 +244,23 @@ export async function removeStoreItem(
     if (shopDoc.exists()) {
       const shopData = shopDoc.data();
 
+      // Convert itemIndex to number to ensure the comparison can be made
+      const index = Number(itemIndex);
+
       // Ensure the itemIndex is within the bounds of the menu array
-      if (itemIndex >= 0 && itemIndex < shopData.menu.length) {
+      if (index >= 0 && index < shopData.menu.length) {
         // Remove the menu item from the 'menu' array field by its index
         const updatedMenu = [...shopData.menu]; // Copy the menu array
-        updatedMenu.splice(itemIndex, 1); // Remove the item at itemIndex
+        updatedMenu.splice(index, 1); // Remove the item at index
 
         // Update the 'menu' array field with the updated array
         await updateDoc(shopDocRef, {
           menu: updatedMenu,
         });
 
-        console.log("Item removed at index:", itemIndex);
+        console.log("Item removed at index:", index);
       } else {
-        console.log("Invalid item index:", itemIndex);
+        console.log("Invalid item index:", index);
       }
     } else {
       console.log("No document found with the ID:", shopID);
