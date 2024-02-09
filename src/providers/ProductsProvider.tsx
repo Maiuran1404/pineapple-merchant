@@ -86,9 +86,9 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
 
   const updateProduct = useCallback(
     async (updatedProduct: ItemProps) => {
-      console.log("This is the update product", store?.id, product, product.name)
       try {
-        const resp = await updateStoreItem(store.id, updatedProduct);
+        console.log("them details", store?.id, updatedProduct.id, updatedProduct);
+        const resp = await updateStoreItem(store.id, updatedProduct.id, updatedProduct);
         if (resp) {
           await queryClient.invalidateQueries({
             queryKey: ["products", store.id],

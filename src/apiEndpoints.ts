@@ -165,39 +165,77 @@ export async function addStoreItem(shopId: string, item: ItemProps) {
   }
 }
 
-export async function updateStoreItem(shopID: string, item: ItemProps) {
+export async function updateStoreItem(shopID, itemID, updatedProperties) {
+  // Reference to the shop document
+  const shopRef = doc(database, "shops", shopID);
+
   try {
-    // Reference to the "products" sub-collection within the specified shop
-    const productsCollection = collection(
-      doc(database, "shops", shopID),
-      "menu",
-    );
+    // Get the shop document
+    const shopSnap = await getDoc(shopRef);
 
-    let image = ""; // Default to empty string if no new image is provided
-
-    if (item.image) {
-      // Upload image and get doc id
-      const result = await uploadImage(item.image, shopID);
-
-      image = result ?? "";
+    // Check if the shop document exists
+    if (!shopSnap.exists()) {
+      console.error("Shop not found");
+      return null;
     }
 
-    const updatedItemData = {
-      ...item,
-      image: image,
-    };
+    // Extract the current menu
+    const shopData = shopSnap.data();
+    const menu = shopData.menu;
 
-    // Reference to the specific item document
-    const itemDocRef = doc(productsCollection, item.id);
+    console.log("Menu:", menu); // Log the entire menu
 
-    // Update the document with the new data
-    await updateDoc(itemDocRef, updatedItemData);
+    // Convert itemID to a number and ensure it's a valid index
+    const index = Number(itemID);
+    console.log("Item ID:", index); // Log the converted item ID
 
-    console.log("Item updated successfully:", item.id);
+    // Check if the index is within the bounds of the menu array
+    if (index < 0 || index >= menu.length) {
+      console.error("Item not found");
+      return null;
+    }
 
-    return item.id;
+    // // If a new image is provided, upload it and get the URL
+    // if (updatedProperties.newImage) {
+    //   // Replace this with your actual image upload function
+    //   const imageURL = await uploadImage(updatedProperties.newImage);
+    //   updatedProperties.imageURL = imageURL;  // Make sure this key matches your schema
+    //   delete updatedProperties.newImage;  // Remove the newImage property as it's not part of the stored data
+    // }
+
+    // Process the new image if present
+    if (
+      updatedProperties.newImage &&
+      updatedProperties.newImage instanceof File
+    ) {
+      // Assuming uploadImage returns a Promise that resolves to the URL of the uploaded image
+      const imageURL = await uploadImage(updatedProperties.newImage);
+      updatedProperties.imageURL = imageURL; // Save the URL to the updated properties
+      delete updatedProperties.newImage; // Remove the File object from the properties
+    }
+
+    // Remove any properties that are still undefined or are File objects
+    const validProperties = {};
+    Object.keys(updatedProperties).forEach((key) => {
+      const value = updatedProperties[key];
+      if (value !== undefined && !(value instanceof File)) {
+        validProperties[key] = value;
+      }
+    });
+
+    // Update the item properties
+    const updatedItem = { ...menu[index], ...validProperties };
+
+    // Replace the old item with the updated item
+    menu[index] = updatedItem;
+
+    // Update the shop document with the updated menu
+    await updateDoc(shopRef, { menu });
+
+    console.log("Item updated successfully:", index);
+    return index;
   } catch (error) {
-    // Handle any errors that occurred during the update
+    // Handle any errors that occur
     console.error("Error updating store item:", error);
     return null;
   }
