@@ -177,9 +177,9 @@ interface UpdatedProperties extends Partial<ItemProps> {
 
 export async function updateStoreItem(
   shopID: string,
-  itemID: string | number,
+  itemID: string,
   updatedProperties: UpdatedProperties
-): Promise<number | null> {
+): Promise<string | null> {
   const shopRef = doc(database, "shops", shopID);
 
   try {
@@ -192,53 +192,45 @@ export async function updateStoreItem(
     const shopData = shopSnap.data();
     const menu = shopData.menu as ItemProps[];
 
-    const index = Number(itemID);
-    if (isNaN(index) || index < 0 || index >= menu.length) {
+    // Find the item by itemID
+    const itemIndex = menu.findIndex(item => item.id === itemID);
+    if (itemIndex === -1) {
       console.error("Item not found");
       return null;
     }
 
     // Handle image upload separately if newImage is provided
-    if (updatedProperties.newImage && updatedProperties.newImage instanceof File) {
+    if (updatedProperties.newImage instanceof File) {
       const imageURL = await uploadImage(updatedProperties.newImage, shopID);
-      // Ensure imageURL is assigned only after successful upload
       updatedProperties.imageURL = imageURL;
-      delete updatedProperties.newImage; // Remove newImage from updatedProperties
+      delete updatedProperties.newImage;
     }
 
-    // Initialize updatedItem with existing menu item values
-    const updatedItem: Partial<ItemProps> = { ...menu[index] };
+    const updatedItem: Partial<ItemProps> = { ...menu[itemIndex] };
     Object.entries(updatedProperties).forEach(([key, value]) => {
-      if (value !== undefined && key !== 'newImage') { // Exclude 'newImage' from being directly assigned
+      if (value !== undefined) { // Now we don't need to exclude 'newImage' because it's already handled
         updatedItem[key as keyof ItemProps] = value;
       }
     });
-    
-    function isValidItemProps(obj: any): obj is ItemProps {
-      return obj && typeof obj.id !== 'undefined' && typeof obj.name !== 'undefined';
+
+    if (!isValidItemProps(updatedItem)) {
+      console.error("Updated item must have an id and a name");
+      return null;
     }
-    
-    try {
-      if (!isValidItemProps(menu?.[index])) {
-        console.error("Updated item must have an id and a name");
-        return null;
-      }
-    
-      menu[index] = updatedItem as ItemProps;
-    
-      await updateDoc(shopRef, { menu });
-    
-      console.log("Item updated successfully:", index);
-      return index;
-    } catch (error) {
-      // Handle error appropriately
-    }
+
+    menu[itemIndex] = updatedItem as ItemProps;
+    await updateDoc(shopRef, { menu });
+    console.log("Item updated successfully:", itemID);
+    return itemID;
   } catch (error) {
     console.error("Error updating store item:", error);
     return null;
   }
 }
 
+function isValidItemProps(obj: any): obj is ItemProps {
+  return obj && typeof obj.id !== 'undefined' && typeof obj.name !== 'undefined';
+}
 
 export async function removeStoreItem(
   shopID: string,
