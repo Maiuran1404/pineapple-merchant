@@ -175,23 +175,10 @@ interface UpdatedProperties extends Partial<ItemProps> {
   newImage?: File; // Optional new image for the item
 }
 
-function isAssignableToItemPropsValue<T extends keyof ItemProps>(key: T, value: any): value is ItemProps[T] {
-  switch (key) {
-    case 'id':
-    case 'name':
-    case 'description':
-    case 'imageURL':
-      return typeof value === 'string' || typeof value === 'undefined';
-    // Add cases for other specific types as needed
-    default:
-      return false; // Or implement more specific logic for other properties
-  }
-}
-
 export async function updateStoreItem(
   shopID: string,
   itemID: string | number,
-  updatedProperties: UpdatedProperties,
+  updatedProperties: UpdatedProperties
 ): Promise<number | null> {
   const shopRef = doc(database, "shops", shopID);
 
@@ -207,36 +194,30 @@ export async function updateStoreItem(
 
     const index = Number(itemID);
     if (isNaN(index) || index < 0 || index >= menu.length) {
-      // Improved check for validity of index
       console.error("Item not found");
       return null;
     }
 
-    if (
-      updatedProperties.newImage &&
-      updatedProperties.newImage instanceof File
-    ) {
+    // Handle image upload separately if newImage is provided
+    if (updatedProperties.newImage && updatedProperties.newImage instanceof File) {
       const imageURL = await uploadImage(updatedProperties.newImage, shopID);
       updatedProperties.imageURL = imageURL;
-      delete updatedProperties.newImage;
     }
 
-    const validProperties: Partial<ItemProps> = Object.entries(updatedProperties).reduce<Partial<ItemProps>>((acc, [key, value]) => {
-      if (value !== undefined && isAssignableToItemPropsValue(key as keyof ItemProps, value)) {
-        acc[key as keyof ItemProps] = value;
+    // Directly update the item with the provided properties, except for 'newImage'
+    const updatedItem = { ...menu[index] };
+    Object.entries(updatedProperties).forEach(([key, value]) => {
+      if (key !== 'newImage' && value !== undefined) {
+        updatedItem[key as keyof ItemProps] = value;
       }
-      return acc;
-    }, {});
-    
-    const updatedItem = { ...menu[index], ...validProperties };
+    });
 
-    menu[index] = updatedItem as ItemProps;
-
-    // Ensure updatedItem satisfies ItemProps interface, particularly that `id` is not undefined
     if (updatedItem.id === undefined) {
       console.error("Updated item must have an id");
       return null;
     }
+
+    menu[index] = updatedItem;
 
     await updateDoc(shopRef, { menu });
 
@@ -247,6 +228,7 @@ export async function updateStoreItem(
     return null;
   }
 }
+
 
 export async function removeStoreItem(
   shopID: string,
