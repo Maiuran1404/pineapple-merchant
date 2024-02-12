@@ -116,6 +116,10 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
           console.error("Store is undefined.");
           return; // or throw new Error("Store is undefined.");
         }
+        if (updatedProduct.id === undefined) {
+          console.error("Product ID is undefined.");
+          return; // Optionally, you can throw an error here
+        }
         const resp = await updateStoreItem(
           store.id,
           updatedProduct.id,

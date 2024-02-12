@@ -172,7 +172,7 @@ interface UpdatedProperties extends Partial<ItemProps> {
 
 export async function updateStoreItem(
   shopID: string,
-  itemID: string,
+  itemID: string | number,
   updatedProperties: UpdatedProperties,
 ): Promise<number | null> {
   const shopRef = doc(database, "shops", shopID);
