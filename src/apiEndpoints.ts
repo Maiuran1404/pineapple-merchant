@@ -170,10 +170,18 @@ interface UpdatedProperties extends Partial<ItemProps> {
 
 export async function updateStoreItem(
   shopID: string,
-  itemIndex: number,
+  itemIndexStr: string,
   updatedProperties: UpdatedProperties
 ): Promise<number | null> {
   const shopRef = doc(database, "shops", shopID);
+
+    // Convert the itemIndexStr to a number
+    const itemIndex = parseInt(itemIndexStr, 10);
+    // Ensure the conversion resulted in a valid number
+    if (isNaN(itemIndex)) {
+      console.error("Invalid item index:", itemIndexStr);
+      return null;
+    }
 
   try {
     const shopSnap = await getDoc(shopRef);
