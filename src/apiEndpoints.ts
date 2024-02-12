@@ -254,8 +254,10 @@ export async function removeStoreItem(
       const index = Number(itemIndex);
 
       // Ensure the itemIndex is within the bounds of the menu array
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (index >= 0 && index < shopData.menu.length) {
         // Remove the menu item from the 'menu' array field by its index
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const updatedMenu = [...shopData.menu]; // Copy the menu array
         updatedMenu.splice(index, 1); // Remove the item at index
 
