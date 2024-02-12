@@ -206,7 +206,7 @@ export async function updateStoreItem(
     }
 
     // Prepare the object with the updated properties, ensuring no undefined values are present
-    const propertiesToUpdate: { [key: string]: any } = {};
+    const propertiesToUpdate: Record<string, Partial<ItemProps>> = {};
     for (const [key, value] of Object.entries(updatedProperties)) {
       if (value !== undefined) {
         propertiesToUpdate[key] = value;
