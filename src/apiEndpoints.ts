@@ -221,8 +221,8 @@ export async function updateStoreItem(
   }
 }
 
-function isValidItemProps(obj: any): obj is ItemProps {
-  return obj && typeof obj.id !== 'undefined' && typeof obj.name !== 'undefined';
+function isValidItemProps(obj: Partial<ItemProps>): obj is ItemProps {
+  return typeof obj?.id !== 'undefined' && typeof obj.name !== 'undefined';
 }
 
 export async function removeStoreItem(
