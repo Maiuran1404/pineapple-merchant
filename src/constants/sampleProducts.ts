@@ -1,5 +1,5 @@
 import { nanoid } from "nanoid";
-import type { ItemProps } from "./orders";
+import type { ItemProps } from "~/types";
 
 export const sampleProducts: ItemProps[] = [
   {
