@@ -98,12 +98,7 @@ export interface StoreProps {
   image?: string;
   location?: string;
   menu?: MenuItem[];
-  openingHours?: {
-    [key: string]: {
-      open?: string;
-      close?: string;
-    };
-  };
+  openingHours: OpeningHours;
 }
 
 export interface ItemProps {

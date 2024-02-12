@@ -11,7 +11,7 @@ import {
   where,
   type DocumentData,
   onSnapshot,
-  FirestoreError,
+  type FirestoreError,
   addDoc,
   arrayUnion,
   arrayRemove,
@@ -20,14 +20,6 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
 import { ItemProps, OrderProps, StoreProps } from "./types";
 import { MenuItem, Shop, TOrder } from "./types";
-
-// Define the interface for the FormData that this endpoint will accept
-interface FormData {
-  userId: string;
-  items: Array<{ productId: string; quantity: number }>;
-  total: number;
-  createdAt: Date | string;
-}
 
 export async function getClerkInFirestore(
   user: UserInfo | null,
@@ -218,7 +210,7 @@ export async function updateStoreItem(
       return null;
     }
 
-    menu[itemIndex] = updatedItem as ItemProps;
+    menu[itemIndex] = updatedItem;
     await updateDoc(shopRef, { menu });
     console.log("Item updated successfully:", itemID);
     return itemID;
