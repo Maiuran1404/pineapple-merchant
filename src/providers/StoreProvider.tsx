@@ -29,7 +29,7 @@ export const StoreContext = createContext<StoreContextType | null>(null);
 
 function StoreProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
-  const [shop, setShop] = useState<any>(null);
+  const [shop, setShop] = useState<StoreProps>();
   const [shopId, setShopId] = useState<string | undefined>();
 
   useEffect(() => {
