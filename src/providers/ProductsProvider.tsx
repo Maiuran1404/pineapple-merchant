@@ -34,14 +34,14 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
     error,
     data: products,
   } = useQuery({
-    queryKey: ["products", store?.id ?? ''], // Provide a fallback value to ensure it's always a string
-    queryFn: () => getStoreItems(store?.id ?? ''), // Fallback value here as well
+    queryKey: ["products", store?.id],
+    queryFn: () => getStoreItems(store?.id as string), // Using an arrow function here
     enabled: !!store?.id,
   });
 
   const addProduct = useCallback(
     async (product: ItemProps) => {
-      console.log("This is the add product", store?.id, product, product.name)
+      console.log("This is the add product", store?.id, product, product.name);
       try {
         console.log("trying to add yo");
         const resp = await addStoreItem(store.id, product);
@@ -87,8 +87,17 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
   const updateProduct = useCallback(
     async (updatedProduct: ItemProps) => {
       try {
-        console.log("them details", store?.id, updatedProduct.id, updatedProduct);
-        const resp = await updateStoreItem(store.id, updatedProduct.id, updatedProduct);
+        console.log(
+          "them details",
+          store?.id,
+          updatedProduct.id,
+          updatedProduct,
+        );
+        const resp = await updateStoreItem(
+          store.id,
+          updatedProduct.id,
+          updatedProduct,
+        );
         if (resp) {
           await queryClient.invalidateQueries({
             queryKey: ["products", store.id],

@@ -4,12 +4,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { getStore } from "~/apiEndpoints";
 
 interface StoreProps {
-  id(
-    id: any,
-    setOrders: React.Dispatch<
-      React.SetStateAction<import("../constants/orders").OrderProps[]>
-    >,
-  ): unknown;
+  id: string;
   uid: string;
   name: string;
   address: string;
