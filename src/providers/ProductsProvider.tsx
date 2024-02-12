@@ -34,7 +34,7 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
     data: products,
   } = useQuery({
     queryKey: ["products", store?.id],
-    queryFn: () => getStoreItems(store?.id!), // Using an arrow function here
+    queryFn: () => getStoreItems(store?.id), // Using an arrow function here
     enabled: !!store?.id,
   });
 
