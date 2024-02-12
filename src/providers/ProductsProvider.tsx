@@ -7,13 +7,13 @@ import {
   removeStoreItem,
   updateStoreItem,
 } from "~/apiEndpoints";
-import type { ItemProps } from "~/types";
+import type { ItemProps, MenuItem } from "~/types";
 import useStore from "~/hooks/useStore";
 
 interface ProductsContextType {
   isLoading: boolean;
   error: unknown;
-  products: ItemProps[];
+  products: MenuItem[];
   addProduct: (product: ItemProps) => void;
   removeProduct: (product: ItemProps) => void;
   updateProduct: (updatedProduct: ItemProps) => void;
