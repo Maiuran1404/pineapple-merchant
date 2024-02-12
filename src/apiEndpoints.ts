@@ -208,15 +208,12 @@ export async function updateStoreItem(
       delete updatedProperties.newImage;
     }
 
-    const validProperties: Partial<ItemProps> = Object.entries(
-      updatedProperties,
-    ).reduce<Partial<ItemProps>>((acc, [key, value]) => {
+    const validProperties: Partial<ItemProps> = Object.entries(updatedProperties).reduce<Partial<ItemProps>>((acc, [key, value]) => {
       if (value !== undefined && !(value instanceof File)) {
         acc[key as keyof ItemProps] = value;
       }
       return acc;
     }, {});
-
     const updatedItem = { ...menu[index], ...validProperties };
 
     menu[index] = updatedItem as ItemProps;
