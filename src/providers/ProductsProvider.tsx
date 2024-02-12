@@ -158,7 +158,7 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <ProductsContext.Provider value={value}>
+    <ProductsContext.Provider value={value as ProductsContextType}>
       {children}
     </ProductsContext.Provider>
   );
