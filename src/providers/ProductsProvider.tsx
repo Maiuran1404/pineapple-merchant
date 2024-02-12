@@ -34,7 +34,13 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
     data: products,
   } = useQuery({
     queryKey: ["products", store?.id],
-    queryFn: () => getStoreItems(store?.id), // Using an arrow function here
+    queryFn: () => {
+      // Ensure store.id is not undefined before calling getStoreItems
+      if (store?.id) {
+        return getStoreItems(store.id); // store.id is now guaranteed to be a string
+      }
+      throw new Error("Store ID is undefined");
+    },
     enabled: !!store?.id,
   });
 
