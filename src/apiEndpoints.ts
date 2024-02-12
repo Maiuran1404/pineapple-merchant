@@ -217,7 +217,7 @@ export async function updateStoreItem(
     // Type assertion to satisfy TypeScript's type checking
     menu[index] = updatedItem as ItemProps;
 
-    if (menu[index].id === undefined || menu[index].name === undefined) {
+    if (menu?.[index].id === undefined || menu[index].name === undefined) {
       console.error("Updated item must have an id and a name");
       return null;
     }
