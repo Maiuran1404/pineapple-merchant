@@ -7,8 +7,7 @@ import {
   removeStoreItem,
   updateStoreItem,
 } from "~/apiEndpoints";
-import type { ItemProps } from "~/constants/orders";
-import { sampleProducts } from "~/constants/sampleProducts";
+import type { ItemProps } from "~/types";
 import useStore from "~/hooks/useStore";
 
 interface ProductsContextType {

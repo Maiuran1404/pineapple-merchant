@@ -80,4 +80,70 @@ export interface Shop {
     name: string | null;
     openingHours: OpeningHours;
 }
+
+export interface CustomerProps {
+    id: string;
+    name: string;
+    address: string;
+  }
+  
+  export interface StoreProps {
+    id: string;
+    name: string;
+    address: string;
+    category?: string;
+    contactInfo?: {
+      email?: string;
+      phone?: string;
+    };
+    description?: string | null;
+    image?: string;
+    location?: string;
+    menu?: MenuItem[];
+    openingHours?: {
+      [key: string]: {
+        open?: string;
+        close?: string;
+      };
+    };
+  }
+  
+  interface MenuItem {
+    id: string;
+    name: string;
+    description?: string;
+    image?: string;
+    imageAlt?: string;
+    price?: number;
+  }
+  
+  export interface ItemProps {
+    id?: string;
+    name: string;
+    description: string;
+    image?: File | undefined;
+    imageAlt?: string;
+    price: number;
+    inStock?: boolean;
+    newImage?: File | undefined;
+    imageURL?: string;
+  }
+  
+  export type OrderStatusType =
+    | "pending"
+    | "in-progress"
+    | "complete"
+    | "cancelled"
+    | "refunded"
+    | "failed";
+  
+  export interface OrderProps {
+    id: string;
+    item: ItemProps;
+    store: StoreProps;
+    quantity: number;
+    customer: CustomerProps;
+    date: Date;
+    status: OrderStatusType;
+  }
   
