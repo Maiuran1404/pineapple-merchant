@@ -100,9 +100,9 @@ export async function getStoreItems(shopID: string) {
         return; // or throw new Error("Store is undefined.");
       }
 
-      return products.map((item: MenuItem, index: { toString: () => any }) => ({
-        id: index.toString(), // Since there's no document id, we can use the array index as a unique id
+      return products.map((item, index) => ({
         ...item,
+        id: index.toString(), // Enhance the item with an ID
       }));
     } else {
       // Handle the case where the shop document doesn't exist
