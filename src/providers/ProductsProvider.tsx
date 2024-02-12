@@ -60,6 +60,10 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
         console.error(err);
         return null;
       } finally {
+        if (!store) {
+          console.error("Store is undefined.");
+          return; // or throw new Error("Store is undefined.");
+        }
         await queryClient.invalidateQueries({
           queryKey: ["products", store.id],
         });
@@ -71,6 +75,10 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
   const removeProduct = useCallback(
     async (product: ItemProps) => {
       try {
+        if (!store) {
+          console.error("Store is undefined.");
+          return; // or throw new Error("Store is undefined.");
+        }
         await removeStoreItem(store.id, product.id).then(() => {
           void queryClient.invalidateQueries({
             queryKey: ["products", store.id],
@@ -79,6 +87,10 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
       } catch (err) {
         console.error(err);
       } finally {
+        if (!store) {
+          console.error("Store is undefined.");
+          return; // or throw new Error("Store is undefined.");
+        }
         await queryClient.invalidateQueries({
           queryKey: ["products", store.id],
         });
@@ -96,6 +108,10 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
           updatedProduct.id,
           updatedProduct,
         );
+        if (!store) {
+          console.error("Store is undefined.");
+          return; // or throw new Error("Store is undefined.");
+        }
         const resp = await updateStoreItem(
           store.id,
           updatedProduct.id,
@@ -112,6 +128,10 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
         console.error(err);
         return null;
       } finally {
+        if (!store) {
+          console.error("Store is undefined.");
+          return; // or throw new Error("Store is undefined.");
+        }
         await queryClient.invalidateQueries({
           queryKey: ["products", store.id],
         });
