@@ -213,19 +213,29 @@ export async function updateStoreItem(
         updatedItem[key as keyof ItemProps] = value;
       }
     });
-
-    // Type assertion to satisfy TypeScript's type checking
-    menu[index] = updatedItem as ItemProps;
-
-    if (menu?.[index].id === undefined || menu[index].name === undefined) {
-      console.error("Updated item must have an id and a name");
+    try {
+      // Ensure menu is defined and the specific item exists before proceeding.
+      if (!menu?.[index]) {
+        console.error("Menu or item is undefined");
+        return null;
+      }
+    
+      menu[index] = updatedItem as ItemProps;
+    
+      // Now that we've ensured menu[index] is defined, we can safely check its properties.
+      if (menu[index].id === undefined || menu[index].name === undefined) {
+        console.error("Updated item must have an id and a name");
+        return null;
+      }
+    
+      await updateDoc(shopRef, { menu });
+    
+      console.log("Item updated successfully:", index);
+      return index;
+    } catch (error) {
+      console.error("Error updating store item:", error);
       return null;
     }
-
-    await updateDoc(shopRef, { menu });
-
-    console.log("Item updated successfully:", index);
-    return index;
   } catch (error) {
     console.error("Error updating store item:", error);
     return null;
