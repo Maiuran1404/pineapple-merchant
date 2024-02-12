@@ -15,7 +15,7 @@ export interface StoreProps {
 }
 
 export interface ItemProps {
-  id?: string;
+  id?: string | number;
   name: string;
   description: string;
   image?: File | undefined;
