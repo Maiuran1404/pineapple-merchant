@@ -20,8 +20,7 @@ interface StoreProps {
 interface StoreContextType {
   isLoading: boolean;
   error: unknown;
-  store: StoreProps | undefined;
-
+  store?: StoreProps;
   updateInfo: (info: StoreProps) => void;
 }
 
