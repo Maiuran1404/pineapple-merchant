@@ -253,7 +253,7 @@ export async function removeStoreItem(
           menu: updatedMenu,
         });
 
-        console.log("Item removed at index:", index);
+        console.log("Item removed at index: ", index);
       } else {
         console.log("Invalid item index:", index);
       }
