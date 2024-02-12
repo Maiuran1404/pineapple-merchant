@@ -43,7 +43,10 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
     async (product: ItemProps) => {
       console.log("This is the add product", store?.id, product, product.name);
       try {
-        console.log("trying to add yo");
+        if (!store) {
+          console.error("Store is undefined.");
+          return; // or throw new Error("Store is undefined.");
+        }
         const resp = await addStoreItem(store.id, product);
         console.log("trying to add yo - sent to AddStoreItem");
         if (resp) {
