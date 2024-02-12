@@ -206,7 +206,7 @@ export async function updateStoreItem(
     }
 
     // Prepare the object with the updated properties, ensuring no undefined values are present
-    let propertiesToUpdate: { [key: string]: any } = {};
+    const propertiesToUpdate: { [key: string]: any } = {};
     for (const [key, value] of Object.entries(updatedProperties)) {
       if (value !== undefined) {
         propertiesToUpdate[key] = value;
