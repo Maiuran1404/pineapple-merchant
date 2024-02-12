@@ -190,7 +190,7 @@ export async function updateStoreItem(
     }
 
     const shopData = shopSnap.data();
-    const menu = shopData.menu as ItemProps[];
+    const menu = shopData.menu as MenuItem[];
 
     const index = Number(itemID);
     if (isNaN(index) || index < 0 || index >= menu.length) {
@@ -208,7 +208,7 @@ export async function updateStoreItem(
     const updatedItem = { ...menu[index] };
     Object.entries(updatedProperties).forEach(([key, value]) => {
       if (key !== 'newImage' && value !== undefined) {
-        updatedItem[key as keyof ItemProps] = value;
+        updatedItem[key as keyof MenuItem] = value;
       }
     });
 
