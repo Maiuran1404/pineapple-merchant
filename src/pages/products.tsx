@@ -4,7 +4,7 @@ import { BiPlus } from "react-icons/bi";
 import Container from "~/components/Container";
 import EditProductModal from "~/components/product/EditProductModal";
 import Product from "~/components/product/Product";
-import type { ItemProps } from "~/constants/orders";
+import type { ItemProps } from "~/types";
 import useProducts from "~/hooks/useProducts";
 
 function Products() {

@@ -3,7 +3,7 @@ import { Fragment, useRef, useState } from "react";
 import { AiOutlineLoading } from "react-icons/ai";
 import { BiX } from "react-icons/bi";
 import { currency } from "~/constants/misc";
-import type { ItemProps } from "~/constants/orders";
+import type { ItemProps } from "~/types";
 
 export default function EditProductModal({
   product,

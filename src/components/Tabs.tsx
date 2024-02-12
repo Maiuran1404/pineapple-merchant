@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { OrderStatusType } from "~/constants/orders";
+import { OrderStatusType } from "~/types";
 
 const tabs = ["pending", "all", "complete", "failed"];
 

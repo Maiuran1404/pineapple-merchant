@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
 import { currency } from "~/constants/misc";
-import type { ItemProps } from "~/constants/orders";
+import type { ItemProps } from "~/types";
 import useProducts from "~/hooks/useProducts";
 import EditProductModal from "./EditProductModal";
 
