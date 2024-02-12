@@ -79,6 +79,10 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
           console.error("Store is undefined.");
           return; // or throw new Error("Store is undefined.");
         }
+        if (product.id === undefined) {
+          console.error("Product ID is undefined.");
+          return; // Optionally, you can throw an error here
+        }
         await removeStoreItem(store.id, product.id).then(() => {
           void queryClient.invalidateQueries({
             queryKey: ["products", store.id],
