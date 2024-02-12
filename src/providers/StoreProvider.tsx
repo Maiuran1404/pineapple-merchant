@@ -46,7 +46,7 @@ function StoreProvider({ children }: { children: React.ReactNode }) {
     data: store,
   } = useQuery({
     queryKey: ["store", shopId],
-    queryFn: () => getStore(shopId),
+    queryFn: () => getStore(shopId ?? null),
     enabled: !!shopId,
   });
 
