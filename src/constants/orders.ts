@@ -29,7 +29,7 @@ export interface StoreProps {
   };
 }
 
-export interface MenuItem {
+interface MenuItem {
   id: string;
   name: string;
   description?: string;
