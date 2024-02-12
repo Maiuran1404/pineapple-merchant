@@ -20,7 +20,7 @@ interface StoreProps {
 interface StoreContextType {
   isLoading: boolean;
   error: unknown;
-  store?: StoreProps;
+  store: StoreProps | null | undefined;
   updateInfo: (info: StoreProps) => void;
 }
 
@@ -57,7 +57,7 @@ function StoreProvider({ children }: { children: React.ReactNode }) {
   const value = { isLoading, error, store, updateInfo };
 
   return (
-    <StoreContext.Provider value={value}>{children}</StoreContext.Provider>
+    <StoreContext.Provider value={value as StoreContextType}>{children}</StoreContext.Provider>
   );
 }
 
