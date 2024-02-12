@@ -12,6 +12,30 @@ export interface StoreProps {
   id: string;
   name: string;
   address: string;
+  category?: string;
+  contactInfo?: {
+    email?: string;
+    phone?: string;
+  };
+  description?: string | null;
+  image?: string;
+  location?: string;
+  menu?: MenuItem[];
+  openingHours?: {
+    [key: string]: {
+      open?: string;
+      close?: string;
+    };
+  };
+}
+
+export interface MenuItem {
+  id: string;
+  name: string;
+  description?: string;
+  image?: string;
+  imageAlt?: string;
+  price?: number;
 }
 
 export interface ItemProps {
@@ -43,52 +67,3 @@ export interface OrderProps {
   date: Date;
   status: OrderStatusType;
 }
-
-// export const orders: OrderProps[] = [
-//   {
-//     id: nanoid(),
-//     item: {
-//       id: nanoid(),
-//       name: "Burger",
-//       image: burgerImage,
-//       description: "Tasty",
-//       price: 5.99,
-//     },
-//     store: {
-//       id: nanoid(),
-//       name: "Burger King",
-//       address: "123 Main St",
-//     },
-//     quantity: 1,
-//     customer: {
-//       id: nanoid(),
-//       name: "John Doe",
-//       address: "123 Main St",
-//     },
-//     date: new Date(),
-//     status: "pending",
-//   },
-//   {
-//     id: nanoid(),
-//     item: {
-//       id: nanoid(),
-//       name: "Fries",
-//       image: friesImage,
-//       description: "Salty",
-//       price: 2.99,
-//     },
-//     store: {
-//       id: nanoid(),
-//       name: "Burger King",
-//       address: "123 Main St",
-//     },
-//     quantity: 1,
-//     customer: {
-//       id: nanoid(),
-//       name: "John Doe",
-//       address: "123 Main St",
-//     },
-//     date: new Date(),
-//     status: "pending",
-//   },
-// ];

@@ -18,7 +18,7 @@ import {
 } from "firebase/firestore";
 import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
-import { ItemProps, OrderProps } from "./constants/orders";
+import { ItemProps, OrderProps, StoreProps } from "./constants/orders";
 import { MenuItem, Shop, TOrder } from "./types";
 
 // Define the interface for the FormData that this endpoint will accept
@@ -92,7 +92,7 @@ export async function getStoreItems(shopID: string) {
     // If the shop document exists
     if (shopDoc.exists()) {
       // Extract the menu items directly from the shop document data
-      const shopData = shopDoc.data();
+      const shopData = shopDoc.data() as StoreProps;
       const products = shopData.menu; // assuming 'menu' is the key for the menu items array
 
       return products.map((item: any, index: { toString: () => any }) => ({
