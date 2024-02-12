@@ -108,15 +108,6 @@ export interface CustomerProps {
     };
   }
   
-  interface MenuItem {
-    id: string;
-    name: string;
-    description?: string;
-    image?: string;
-    imageAlt?: string;
-    price?: number;
-  }
-  
   export interface ItemProps {
     id?: string;
     name: string;
