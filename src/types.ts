@@ -98,7 +98,7 @@ export interface StoreProps {
   image?: string;
   location?: string;
   menu?: MenuItem[];
-  openingHours: OpeningHours;
+  openingHours?: OpeningHours;
 }
 
 export interface ItemProps {

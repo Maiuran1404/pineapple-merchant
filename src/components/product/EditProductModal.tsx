@@ -93,6 +93,8 @@ export default function EditProductModal({
       imageAlt: image?.name,
     } as ItemProps); // Assert that the object matches `ItemProps`
 
+    console.log("this was updated yo", name);
+
     setOpen(false);
     setIsLoading(false);
   }

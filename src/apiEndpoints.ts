@@ -20,6 +20,7 @@ import { getDownloadURL, getStorage, ref, uploadBytes } from "firebase/storage";
 import { database } from "~/../firebase";
 import { ItemProps, OrderProps, StoreProps } from "./types";
 import { MenuItem, Shop, TOrder } from "./types";
+import { AnyZodTuple } from "zod";
 
 export async function getClerkInFirestore(
   user: UserInfo | null,
@@ -169,9 +170,9 @@ interface UpdatedProperties extends Partial<ItemProps> {
 
 export async function updateStoreItem(
   shopID: string,
-  itemID: string,
+  itemIndex: number,
   updatedProperties: UpdatedProperties
-): Promise<string | null> {
+): Promise<number | null> {
   const shopRef = doc(database, "shops", shopID);
 
   try {
@@ -182,44 +183,52 @@ export async function updateStoreItem(
     }
 
     const shopData = shopSnap.data();
-    const menu = shopData.menu as ItemProps[];
+    let menu = shopData.menu as ItemProps[];
 
-    // Find the item by itemID
-    const itemIndex = menu.findIndex(item => item.id === itemID);
-    if (itemIndex === -1) {
-      console.error("Item not found");
+    // Check if the itemIndex is valid
+    if (itemIndex < 0 || itemIndex >= menu.length) {
+      console.error("Item not found for index:", itemIndex);
       return null;
     }
 
-    // Handle image upload separately if newImage is provided
-    if (updatedProperties.newImage instanceof File) {
+    // Process the image separately if it's included in the update
+    if (updatedProperties.newImage && updatedProperties.newImage instanceof File) {
       const imageURL = await uploadImage(updatedProperties.newImage, shopID);
       updatedProperties.imageURL = imageURL;
-      delete updatedProperties.newImage;
     }
 
-    const updatedItem: Partial<ItemProps> = { ...menu[itemIndex] };
-    Object.entries(updatedProperties).forEach(([key, value]) => {
+    // Prepare the object with the updated properties, ensuring no undefined values are present
+    let propertiesToUpdate: { [key: string]: any } = {};
+    for (const [key, value] of Object.entries(updatedProperties)) {
       if (value !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        updatedItem[key as keyof ItemProps] = value;
+        propertiesToUpdate[key] = value;
       }
-    });
-
-    if (!isValidItemProps(updatedItem)) {
-      console.error("Updated item must have an id and a name");
-      return null;
     }
 
-    menu[itemIndex] = updatedItem;
+    // Remove the newImage property as it's not a field in the Firestore document
+    delete propertiesToUpdate.newImage;
+    delete propertiesToUpdate.id;
+
+    // Create a new updated item object
+    const updatedItem: Partial<ItemProps> = { ...menu[itemIndex], ...propertiesToUpdate };
+
+    // Replace the item in the menu
+    menu = [
+      ...menu.slice(0, itemIndex),
+      updatedItem as ItemProps,
+      ...menu.slice(itemIndex + 1)
+    ];
+
+    // Update the document in Firestore
     await updateDoc(shopRef, { menu });
-    console.log("Item updated successfully:", itemID);
-    return itemID;
+    console.log("Item updated successfully at index:", itemIndex);
+    return itemIndex;
   } catch (error) {
     console.error("Error updating store item:", error);
     return null;
   }
 }
+
 
 function isValidItemProps(obj: Partial<ItemProps>): obj is ItemProps {
   return typeof obj?.id !== 'undefined' && typeof obj.name !== 'undefined';
@@ -241,10 +250,8 @@ export async function removeStoreItem(
       const index = Number(itemIndex);
 
       // Ensure the itemIndex is within the bounds of the menu array
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
       if (index >= 0 && index < shopData.menu.length) {
         // Remove the menu item from the 'menu' array field by its index
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const updatedMenu = [...shopData.menu]; // Copy the menu array
         updatedMenu.splice(index, 1); // Remove the item at index
 
@@ -253,7 +260,7 @@ export async function removeStoreItem(
           menu: updatedMenu,
         });
 
-        console.log("Item removed at index: ", index);
+        console.log("Item removed at index:", index);
       } else {
         console.log("Invalid item index:", index);
       }
