@@ -190,7 +190,7 @@ export async function updateStoreItem(
     }
 
     const shopData = shopSnap.data();
-    const menu = shopData.menu as MenuItem[];
+    const menu = shopData.menu as ItemProps[];
 
     const index = Number(itemID);
     if (isNaN(index) || index < 0 || index >= menu.length) {
@@ -201,23 +201,26 @@ export async function updateStoreItem(
     // Handle image upload separately if newImage is provided
     if (updatedProperties.newImage && updatedProperties.newImage instanceof File) {
       const imageURL = await uploadImage(updatedProperties.newImage, shopID);
+      // Ensure imageURL is assigned only after successful upload
       updatedProperties.imageURL = imageURL;
+      delete updatedProperties.newImage; // Remove newImage from updatedProperties
     }
 
-    // Directly update the item with the provided properties, except for 'newImage'
-    const updatedItem = { ...menu[index] };
+    // Initialize updatedItem with existing menu item values
+    const updatedItem: Partial<ItemProps> = { ...menu[index] };
     Object.entries(updatedProperties).forEach(([key, value]) => {
-      if (key !== 'newImage' && value !== undefined) {
-        updatedItem[key as keyof MenuItem] = value;
+      if (value !== undefined && key !== 'newImage') { // Exclude 'newImage' from being directly assigned
+        updatedItem[key as keyof ItemProps] = value;
       }
     });
 
-    if (updatedItem.id === undefined) {
-      console.error("Updated item must have an id");
+    // Type assertion to satisfy TypeScript's type checking
+    menu[index] = updatedItem as ItemProps;
+
+    if (menu[index].id === undefined || menu[index].name === undefined) {
+      console.error("Updated item must have an id and a name");
       return null;
     }
-
-    menu[index] = updatedItem;
 
     await updateDoc(shopRef, { menu });
 
