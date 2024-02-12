@@ -200,7 +200,8 @@ export async function updateStoreItem(
 
     const updatedItem: Partial<ItemProps> = { ...menu[itemIndex] };
     Object.entries(updatedProperties).forEach(([key, value]) => {
-      if (value !== undefined) { // Now we don't need to exclude 'newImage' because it's already handled
+      if (value !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         updatedItem[key as keyof ItemProps] = value;
       }
     });
