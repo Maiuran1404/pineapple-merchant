@@ -34,8 +34,8 @@ function ProductsProvider({ children }: { children: React.ReactNode }) {
     error,
     data: products,
   } = useQuery({
-    queryKey: ["products", store?.id],
-    queryFn: () => getStoreItems(store?.id),
+    queryKey: ["products", store?.id ?? ''], // Provide a fallback value to ensure it's always a string
+    queryFn: () => getStoreItems(store?.id ?? ''), // Fallback value here as well
     enabled: !!store?.id,
   });
 
