@@ -209,6 +209,7 @@ export async function updateStoreItem(
     const propertiesToUpdate: Record<string, Partial<ItemProps>> = {};
     for (const [key, value] of Object.entries(updatedProperties)) {
       if (value !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         propertiesToUpdate[key] = value;
       }
     }
@@ -235,11 +236,6 @@ export async function updateStoreItem(
     console.error("Error updating store item:", error);
     return null;
   }
-}
-
-
-function isValidItemProps(obj: Partial<ItemProps>): obj is ItemProps {
-  return typeof obj?.id !== 'undefined' && typeof obj.name !== 'undefined';
 }
 
 export async function removeStoreItem(
