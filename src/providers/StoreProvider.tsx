@@ -30,12 +30,13 @@ export const StoreContext = createContext<StoreContextType | null>(null);
 function StoreProvider({ children }: { children: React.ReactNode }) {
   const { user } = useUser();
   const [shop, setShop] = useState<any>(null);
-  const [shopId, setShopId] = useState<string>();
+  const [shopId, setShopId] = useState<string | undefined>();
 
   useEffect(() => {
-    if (user?.publicMetadata?.shopId) {
-      const { shopId } = user.publicMetadata;
-      setShopId(shopId);
+    // Ensure shopId is either a string or undefined
+    const fetchedShopId = user?.publicMetadata?.shopId;
+    if (typeof fetchedShopId === 'string') {
+      setShopId(fetchedShopId);
     }
   }, [user]);
 
