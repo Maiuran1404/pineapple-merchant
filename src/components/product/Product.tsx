@@ -1,7 +1,7 @@
 import { Switch } from "@headlessui/react";
 import clsx from "clsx";
 import { motion } from "framer-motion";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BiEditAlt, BiTrash } from "react-icons/bi";
 import { currency } from "~/constants/misc";
 import type { ItemProps } from "~/constants/orders";
@@ -16,6 +16,23 @@ function Product({ product }: { product: ItemProps }) {
   const { removeProduct, updateProduct } = useProducts();
   const [outOfStock, setOutOfStock] = useState(false);
   const [open, setOpen] = useState(false);
+  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    // Check if product.image is a File object and not already a URL string
+    if (product.image instanceof File) {
+      const url = URL.createObjectURL(product.image);
+      setImageSrc(url);
+
+      // Cleanup: Revoke the object URL when the component unmounts or the File changes
+      return () => {
+        URL.revokeObjectURL(url);
+      };
+    } else {
+      // Directly use the string URL (or undefined) if not a File
+      setImageSrc(product.image);
+    }
+  }, [product.image]);
 
   function handleRemoveProduct(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
@@ -55,7 +72,7 @@ function Product({ product }: { product: ItemProps }) {
         <div className="flex items-center justify-between border-b border-gray-900/5 bg-gray-50 p-6">
           <div className="flex items-center gap-x-4">
             <img
-              src={product.image}
+              src={imageSrc}
               alt={product.imageAlt ?? product.name}
               className="h-12 w-12 flex-none rounded-lg bg-white object-cover ring-1 ring-gray-900/10"
             />
