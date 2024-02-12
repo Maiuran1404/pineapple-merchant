@@ -175,6 +175,19 @@ interface UpdatedProperties extends Partial<ItemProps> {
   newImage?: File; // Optional new image for the item
 }
 
+function isAssignableToItemPropsValue<T extends keyof ItemProps>(key: T, value: any): value is ItemProps[T] {
+  switch (key) {
+    case 'id':
+    case 'name':
+    case 'description':
+    case 'imageURL':
+      return typeof value === 'string' || typeof value === 'undefined';
+    // Add cases for other specific types as needed
+    default:
+      return false; // Or implement more specific logic for other properties
+  }
+}
+
 export async function updateStoreItem(
   shopID: string,
   itemID: string | number,
@@ -209,11 +222,12 @@ export async function updateStoreItem(
     }
 
     const validProperties: Partial<ItemProps> = Object.entries(updatedProperties).reduce<Partial<ItemProps>>((acc, [key, value]) => {
-      if (value !== undefined && !(value instanceof File)) {
+      if (value !== undefined && isAssignableToItemPropsValue(key as keyof ItemProps, value)) {
         acc[key as keyof ItemProps] = value;
       }
       return acc;
     }, {});
+    
     const updatedItem = { ...menu[index], ...validProperties };
 
     menu[index] = updatedItem as ItemProps;
