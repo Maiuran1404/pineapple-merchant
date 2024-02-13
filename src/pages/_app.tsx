@@ -17,7 +17,6 @@ const MyApp: AppType = ({ Component, pageProps }) => {
     <ClerkProvider>
         <QueryClientProvider client={queryClient}>
           <StoreProvider>
-            {/* <StoreStatusProvider> */}
               <ProductsProvider>
                 <>
                   <Head>
@@ -32,7 +31,6 @@ const MyApp: AppType = ({ Component, pageProps }) => {
                 </>
                 <Component {...pageProps} />
               </ProductsProvider>
-            {/* </StoreStatusProvider> */}
           </StoreProvider>
         </QueryClientProvider>
     </ClerkProvider>
