@@ -168,6 +168,32 @@ interface UpdatedProperties extends Partial<ItemProps> {
   newImage?: File; // Optional new image for the item
 }
 
+export async function uploadImage(file: File | null, shopID: string | null): Promise<string | null> {
+  if (!file || !shopID) {
+    console.error("Error uploading image: File or shopID is undefined");
+    return null;
+  }
+
+  const storePath = `shop/${shopID}/menu`;
+  try {
+    const storage = getStorage();
+    if (!storage) {
+      console.error("Firebase Storage is not initialized");
+      return null;
+    }
+
+    const storageRef = ref(storage, `${storePath}/${file.name}`);
+    await uploadBytes(storageRef, file);
+
+    // Get the download URL
+    const downloadURL = await getDownloadURL(storageRef);
+    return downloadURL;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    return null;
+  }
+}
+
 export async function updateStoreItem(
   shopID: string,
   itemIndexStr: string,
@@ -203,7 +229,7 @@ export async function updateStoreItem(
     if (updatedProperties.newImage && updatedProperties.newImage instanceof File) {
       const imageURL = await uploadImage(updatedProperties.newImage, shopID);
       updatedProperties.imageURL = imageURL;
-    }
+    }    
 
     // Prepare the object with the updated properties, ensuring no undefined values are present
     const propertiesToUpdate: Record<string, Partial<ItemProps>> = {};
@@ -275,23 +301,6 @@ export async function removeStoreItem(
     }
   } catch (error) {
     console.error("Error removing store item:", error);
-  }
-}
-
-export async function uploadImage(file: File, shopID: string) {
-  const storePath = `shop/${shopID}/menu`;
-  try {
-    const storage = getStorage();
-    const storageRef = ref(storage, `${storePath}/${file.name}`);
-
-    await uploadBytes(storageRef, file);
-
-    // Get the download URL
-    const downloadURL = await getDownloadURL(storageRef);
-
-    return downloadURL;
-  } catch (error) {
-    console.error("Error uploading image:", error);
   }
 }
 
