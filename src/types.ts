@@ -31,12 +31,12 @@ interface Menu {
   optionTypes: OptionType[];
 }
 
-interface Day {
+export interface Day {
   open: string | null;
   close: string | null;
 }
 
-type OpeningHours = {
+export type OpeningHours = {
   monday: Day;
   tuesday: Day;
   wednesday: Day;
