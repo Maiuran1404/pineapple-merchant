@@ -228,9 +228,9 @@ export async function updateStoreItem(
     // Process the image separately if it's included in the update
     if (updatedProperties.newImage && updatedProperties.newImage instanceof File) {
       const imageURL = await uploadImage(updatedProperties.newImage, shopID);
-      updatedProperties.imageURL = imageURL;
-    }    
-
+      updatedProperties.imageURL = imageURL ?? undefined;
+    }
+    
     // Prepare the object with the updated properties, ensuring no undefined values are present
     const propertiesToUpdate: Record<string, Partial<ItemProps>> = {};
     for (const [key, value] of Object.entries(updatedProperties)) {
