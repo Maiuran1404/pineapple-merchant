@@ -174,7 +174,7 @@ export async function uploadImage(file: File | null, shopID: string | null): Pro
     return null;
   }
 
-  const storePath = `shop/${shopID}/menu`;
+  const storePath = `shops/${shopID}/menu`;
   try {
     const storage = getStorage();
     if (!storage) {
