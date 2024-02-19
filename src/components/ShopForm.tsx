@@ -1,5 +1,10 @@
 import { motion } from "framer-motion";
-import React, { useState, useEffect, type ChangeEvent, type FormEvent } from "react";
+import React, {
+  useState,
+  useEffect,
+  type ChangeEvent,
+  type FormEvent,
+} from "react";
 import { fetchShopData, saveShopInfoInFirestore } from "~/apiEndpoints";
 import { Day, OpeningHours, type Shop } from "~/types";
 
@@ -88,7 +93,7 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
   const handleOpeningHoursChange = (
     day: keyof OpeningHours,
     key: keyof Day,
-    value: string
+    value: string,
   ) => {
     setShopData((prevData) => ({
       ...prevData,
@@ -134,26 +139,53 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
     );
   }
 
+  const prefillSampleData = () => {
+    const sampleData: Shop = {
+      name: "Sample Shop",
+      address: "123 Sample Street",
+      category: "Cafe",
+      description: "This is a sample shop used for demonstration purposes.",
+      contactInfo: { email: "contact@sampleshop.com", phone: "123-456-7890" },
+      image: "https://firebasestorage.googleapis.com/v0/b/pineapple-28.appspot.com/o/shops%2Fclerkid%2Fnielskaffebar.jpeg?alt=media&token=ec532fa2-8f88-4c11-861c-d7dc2beb155a",
+      location: "Sample Location",
+      menu: [],
+      openingHours: {
+        monday: { open: "08:00", close: "18:00" },
+        tuesday: { open: "08:00", close: "18:00" },
+        wednesday: { open: "08:00", close: "18:00" },
+        thursday: { open: "08:00", close: "18:00" },
+        friday: { open: "08:00", close: "18:00" },
+        saturday: { open: "10:00", close: "16:00" },
+        sunday: { open: null, close: null },
+      },
+    };
+    setShopData(sampleData); // Prefill the form with sample data
+  };
+
   const renderOpeningHoursInputs = (day: keyof OpeningHours) => {
     const hours = shopData.openingHours[day]; // This is now strongly typed
     return (
       <div key={day} className="flex flex-col gap-2">
-        <label className="text-gray-700 capitalize">{day} Opening Hours:</label>
+        <label className="capitalize text-gray-700">{day} Opening Hours:</label>
         <div className="flex gap-2">
           <input
-            className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
+            className="w-1/2 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="text"
             name={`${day}.open`}
-            value={hours.open ?? ''}
-            onChange={(e) => handleOpeningHoursChange(day, 'open', e.target.value)}
+            value={hours.open ?? ""}
+            onChange={(e) =>
+              handleOpeningHoursChange(day, "open", e.target.value)
+            }
             placeholder="Open"
           />
           <input
-            className="p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-1/2"
+            className="w-1/2 rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             type="text"
             name={`${day}.close`}
-            value={hours.close ?? ''}
-            onChange={(e) => handleOpeningHoursChange(day, 'close', e.target.value)}
+            value={hours.close ?? ""}
+            onChange={(e) =>
+              handleOpeningHoursChange(day, "close", e.target.value)
+            }
             placeholder="Close"
           />
         </div>
@@ -163,6 +195,14 @@ const ShopForm: React.FC<ShopFormProps> = ({ shopId }) => {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 p-5">
+      <button
+        type="button"
+        onClick={prefillSampleData}
+        disabled={loading}
+        className="mb-4 self-start"
+      >
+        Prefill Sample Data
+      </button>
       <input
         className="rounded-md border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
         type="text"
